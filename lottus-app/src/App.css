@@ -1,0 +1,10 @@
+.app {
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* As animações de seção agora são controladas pelo AOS */
+section {
+  position: relative;
+}

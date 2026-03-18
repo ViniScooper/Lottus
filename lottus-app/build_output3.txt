@@ -1,0 +1,15 @@
+
+> lottus-app@0.0.0 build
+> vite build
+
+[36mvite v8.0.0 [32mbuilding client environment for production...[36m[39m
+[2Ktransforming...✓ 41 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                           0.46 kB │ gzip:  0.29 kB
+dist/assets/logo_main-DdOKRlka.png       48.60 kB
+dist/assets/pattern_light-C-IRRkVh.png   57.48 kB
+dist/assets/index-gZ8kyU1I.css           14.79 kB │ gzip:  3.66 kB
+dist/assets/index-BAY1z8mG.js           247.83 kB │ gzip: 78.05 kB
+
+[32m✓ built in 1.38s[39m

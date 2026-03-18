@@ -1,0 +1,131 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  padding: 25px 0;
+  transition: var(--transition);
+  background: transparent;
+}
+
+.header.scrolled {
+  padding: 10px 0;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  background: rgba(255, 255, 255, 0.7);
+  padding: 8px 15px;
+  border-radius: 12px;
+  transition: var(--transition);
+}
+
+.header.scrolled .logo {
+  background: transparent;
+  padding: 0;
+}
+
+.logo-img {
+  height: 95px;
+  width: auto;
+  transition: var(--transition);
+  display: block;
+  filter: brightness(0.4) contrast(1.2); /* Deixa a logo bem mais escura */
+}
+
+.header.scrolled .logo-img {
+  height: 65px;
+}
+
+.nav ul {
+  display: flex;
+  gap: 30px;
+}
+
+.nav a {
+  font-weight: 500;
+  color: var(--text);
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  position: relative;
+}
+
+.nav a::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--primary);
+  transition: var(--transition);
+}
+
+.nav a:hover::after {
+  width: 100%;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+}
+
+
+.menu-toggle {
+  display: none;
+  color: var(--dark);
+  padding: 8px;
+}
+
+@media (max-width: 768px) {
+  .logo-img {
+    height: 70px;
+  }
+  
+  .header.scrolled .logo-img {
+    height: 50px;
+  }
+
+  .nav {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 80%;
+    max-width: 300px;
+    height: 100vh;
+    background: var(--white);
+    padding: 100px 40px;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+    transition: 0.4s ease-in-out;
+    z-index: 1000;
+  }
+
+  .nav.open {
+    right: 0;
+  }
+
+  .nav ul {
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .nav a {
+    font-size: 1.2rem;
+  }
+
+  .menu-toggle {
+    display: block;
+    margin-left: 15px;
+    z-index: 1001;
+  }
+}
