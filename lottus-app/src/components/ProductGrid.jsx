@@ -1,81 +1,29 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import './ProductGrid.css';
 
-const products = [
-  {
-    id: 1,
-    name: 'Bolsa Boho Lottus',
-    price: 'R$ 180,00',
-    image: '/images/crochet_bag_1773664603233.png',
-    images: [
-      '/images/crochet_bag_1773664603233.png',
-      '/images/crochet_rugs_1773664671137.png', // Placeholder 2
-      '/images/crochet_blanket_1773664622003.png' // Placeholder 3
-    ],
-    tag: 'Bestseller',
-    details: {
-      size: 'M',
-      width: '30cm',
-      height: '25cm',
-      depth: '10cm',
-      description: 'Uma bolsa versátil e elegante, perfeita para o dia a dia. Feita com fio de algodão sustentável.'
-    }
-  },
-  {
-    id: 2,
-    name: 'Manta Cozy Color',
-    price: 'R$ 350,00',
-    image: '/images/crochet_blanket_1773664622003.png',
-    images: [
-      '/images/crochet_blanket_1773664622003.png',
-      '/images/crochet_bag_1773664603233.png', 
-    ],
-    tag: 'Novo',
-    details: {
-      size: 'Casal',
-      width: '1.50m',
-      height: '2.00m',
-      description: 'Aconchego puro para suas noites. Cores vibrantes que alegram qualquer ambiente.'
-    }
-  },
-  {
-    id: 3,
-    name: 'Top Crochet Summer',
-    price: 'R$ 120,00',
-    image: '/images/crochet_top_1773664642938.png',
-    images: [
-      '/images/crochet_top_1773664642938.png',
-    ],
-    tag: 'Premium',
-    details: {
-      size: 'P/M',
-      width: '40cm (ajustável)',
-      height: '35cm',
-      description: 'Leveza e estilo para os dias de sol. Design exclusivo que se molda ao corpo.'
-    }
-  },
-  {
-    id: 4,
-    name: 'Kit Sousplat Mandala',
-    price: 'R$ 95,00',
-    image: '/images/crochet_rugs_1773664671137.png',
-    images: [
-      '/images/crochet_rugs_1773664671137.png',
-    ],
-    tag: 'Artesanal',
-    details: {
-      size: 'Único',
-      width: '35cm (diâmetro)',
-      description: 'Mesa posta com carinho. Conjunto de 4 peças com tramas em relevo.'
-    }
-  }
-];
+const API = 'http://localhost:3001';
+
+// /uploads/ é servido pelo Vite (public/uploads/) — não precisa do prefixo da API
+const resolveImg = (url) => {
+  if (!url) return '';
+  return url; // O browser resolve relativo ao origin atual (localhost:5173)
+};
 
 const ProductGrid = () => {
-  const [selectedProduct, setSelectedProduct] = React.useState(null);
-  const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
+  const [products, setProducts]           = useState([]);
+  const [loading, setLoading]             = useState(true);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Busca apenas produtos marcados como "featured" (Vitrine da Home)
+  useEffect(() => {
+    fetch(`${API}/products?featured=true`)
+      .then(r => r.json())
+      .then(data => { setProducts(Array.isArray(data) ? data : []); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, []);
 
   const openModal = (product) => {
     setSelectedProduct(product);
@@ -90,25 +38,30 @@ const ProductGrid = () => {
 
   const nextImage = (e) => {
     e.stopPropagation();
-    if (selectedProduct && selectedProduct.images) {
-      setCurrentImageIndex((prev) => (prev === selectedProduct.images.length - 1 ? 0 : prev + 1));
+    if (selectedProduct?.images?.length) {
+      setCurrentImageIndex(prev => (prev === selectedProduct.images.length - 1 ? 0 : prev + 1));
     }
   };
 
   const prevImage = (e) => {
     e.stopPropagation();
-    if (selectedProduct && selectedProduct.images) {
-      setCurrentImageIndex((prev) => (prev === 0 ? selectedProduct.images.length - 1 : prev - 1));
+    if (selectedProduct?.images?.length) {
+      setCurrentImageIndex(prev => (prev === 0 ? selectedProduct.images.length - 1 : prev - 1));
     }
   };
 
   const handleWhatsAppOrder = () => {
-    if(!selectedProduct) return;
-    const phoneNumber = "558192496177"; 
-    const message = `Olá, Lottus! Gostei muito da *${selectedProduct.name}* (${selectedProduct.price}). Gostaria de encomendar!`;
-    const wpUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-    window.open(wpUrl, '_blank');
+    if (!selectedProduct) return;
+    const phoneNumber = '558192496177';
+    const price = `R$ ${Number(selectedProduct.price).toFixed(2).replace('.', ',')}`;
+    const message = `Olá, Lottus! Gostei muito da *${selectedProduct.name}* (${price}). Gostaria de encomendar!`;
+    window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
   };
+
+  const currentImg = selectedProduct
+    ? resolveImg(selectedProduct.images?.[currentImageIndex] || selectedProduct.images?.[0] || '')
+    : '';
+
   return (
     <section id="products" className="products">
       <div className="container">
@@ -116,73 +69,69 @@ const ProductGrid = () => {
           <h2 className="section-title">Nossas Peças</h2>
           <p className="section-subtitle">Cada ponto conta uma história</p>
         </div>
-        
-        <div className="product-grid">
-          {products.map((product, index) => (
-            <div 
-              key={product.id} 
-              className="product-card" 
-              onClick={() => openModal(product)}
-              data-aos="fade-up"
-              data-aos-delay={index * 100}
-            >
-              <div className="product-image">
-                <img src={product.image} alt={product.name} />
-                <span className="product-tag">{product.tag}</span>
+
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '60px', color: '#888' }}>Carregando peças...</div>
+        ) : products.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '60px', color: '#888' }}>
+            <p style={{ fontSize: '1.1rem' }}>Em breve novidades! 🧶</p>
+            <p style={{ fontSize: '0.9rem', marginTop: '8px' }}>
+              Enquanto isso, <Link to="/pecas" style={{ color: 'var(--primary)' }}>veja todo o catálogo</Link>.
+            </p>
+          </div>
+        ) : (
+          <div className="product-grid">
+            {products.map((product, index) => (
+              <div
+                key={product.id}
+                className="product-card"
+                onClick={() => openModal(product)}
+                data-aos="fade-up"
+                data-aos-delay={index * 100}
+              >
+                <div className="product-image">
+                  <img src={resolveImg(product.images?.[0])} alt={product.name} />
+                  {product.tag && <span className="product-tag">{product.tag}</span>}
+                </div>
+                <div className="product-info">
+                  <h3>{product.name}</h3>
+                  <p className="price">R$ {Number(product.price).toFixed(2).replace('.', ',')}</p>
+                </div>
               </div>
-              <div className="product-info">
-                <h3>{product.name}</h3>
-                <p className="price">{product.price}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-        
+            ))}
+          </div>
+        )}
+
         {selectedProduct && createPortal(
           <div className="modal-overlay" onClick={closeModal}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
               <button className="modal-close" onClick={closeModal}>&times;</button>
               <div className="modal-body">
                 <div className="modal-image">
-                  <img src={selectedProduct.images ? selectedProduct.images[currentImageIndex] : selectedProduct.image} alt={selectedProduct.name} />
-                  {selectedProduct.images && selectedProduct.images.length > 1 && (
-                    <div className="gallery-controls">
-                      <button className="gallery-btn" onClick={prevImage}>&#10094;</button>
-                      <button className="gallery-btn" onClick={nextImage}>&#10095;</button>
-                    </div>
-                  )}
-                  {selectedProduct.images && selectedProduct.images.length > 1 && (
-                    <div className="gallery-dots">
-                      {selectedProduct.images.map((_, idx) => (
-                        <span key={idx} className={`dot ${idx === currentImageIndex ? 'active' : ''}`} onClick={(e) => { e.stopPropagation(); setCurrentImageIndex(idx) }}></span>
-                      ))}
-                    </div>
+                  <img src={currentImg} alt={selectedProduct.name} />
+                  {selectedProduct.images?.length > 1 && (
+                    <>
+                      <div className="gallery-controls">
+                        <button className="gallery-btn" onClick={prevImage}>&#10094;</button>
+                        <button className="gallery-btn" onClick={nextImage}>&#10095;</button>
+                      </div>
+                      <div className="gallery-dots">
+                        {selectedProduct.images.map((_, idx) => (
+                          <span
+                            key={idx}
+                            className={`dot ${idx === currentImageIndex ? 'active' : ''}`}
+                            onClick={(e) => { e.stopPropagation(); setCurrentImageIndex(idx); }}
+                          />
+                        ))}
+                      </div>
+                    </>
                   )}
                 </div>
                 <div className="modal-details">
                   <h2 className="brand-font">{selectedProduct.name}</h2>
-                  <p className="modal-price">{selectedProduct.price}</p>
-                  <p className="modal-desc">{selectedProduct.details.description}</p>
-                  
-                  <div className="specs">
-                    <div className="spec-item">
-                      <span>Tamanho:</span>
-                      <strong>{selectedProduct.details.size}</strong>
-                    </div>
-                    {selectedProduct.details.width && (
-                      <div className="spec-item">
-                        <span>Largura:</span>
-                        <strong>{selectedProduct.details.width}</strong>
-                      </div>
-                    )}
-                    {selectedProduct.details.height && (
-                      <div className="spec-item">
-                        <span>Altura:</span>
-                        <strong>{selectedProduct.details.height}</strong>
-                      </div>
-                    )}
-                  </div>
-                  
+                  <p className="modal-price">R$ {Number(selectedProduct.price).toFixed(2).replace('.', ',')}</p>
+                  {selectedProduct.tag && <span className="product-tag" style={{ display: 'inline-block', marginBottom: '12px' }}>{selectedProduct.tag}</span>}
+                  <p className="modal-desc">{selectedProduct.description}</p>
                   <button className="btn btn-primary modal-buy-btn" onClick={handleWhatsAppOrder}>
                     Pedir no WhatsApp
                   </button>
@@ -192,7 +141,7 @@ const ProductGrid = () => {
           </div>,
           document.body
         )}
-        
+
         <div className="view-more">
           <Link to="/pecas" className="btn btn-outline">Ver Todas as Peças</Link>
         </div>

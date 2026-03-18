@@ -71,6 +71,23 @@
   margin: 0 5px;
 }
 
+/* Link secreto do ADM — discreto no rodapé */
+.adm-footer-link {
+  margin-left: 10px;
+  opacity: 0.25;
+  transition: opacity 0.3s ease;
+}
+
+.adm-footer-link:hover {
+  opacity: 1;
+}
+
+.adm-footer-link a {
+  font-size: 0.8rem;
+  color: #aaa;
+  text-decoration: none;
+}
+
 @media (max-width: 768px) {
   .footer-content {
     grid-template-columns: 1fr;

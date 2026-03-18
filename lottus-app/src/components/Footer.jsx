@@ -32,8 +32,10 @@ const Footer = () => {
         <div className="footer-bottom">
           <p>&copy; {new Date().getFullYear()} Lottus Crochê. Todos os direitos reservados.</p>
           <div className="payment-methods">
-             {/* Simple payment icons or text */}
              <span>Visa</span> • <span>Mastercard</span> • <span>Pix</span>
+             <span className="adm-footer-link">
+               <Link to="/adm/login" title="Painel Administrativo">•⚙️</Link>
+             </span>
           </div>
         </div>
       </div>

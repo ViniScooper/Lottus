@@ -231,6 +231,7 @@
   padding: 50px;
   display: flex;
   flex-direction: column;
+  justify-content: flex-start; /* Conteúdo sempre do topo, botão acompanha */
 }
 
 .modal-details h2 {
@@ -278,7 +279,7 @@
 }
 
 .modal-buy-btn {
-  margin-top: auto;
+  margin-top: 28px;
   width: 100%;
 }
 
