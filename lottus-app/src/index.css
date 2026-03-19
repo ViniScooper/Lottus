@@ -1,18 +1,34 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+/* =====================================================
+   LOTTUS — Identidade Visual Oficial
+   Paleta + Fontes da Marca
+   ===================================================== */
+
+/* Poppins (corpo) + Playfair Display (títulos elegantes) */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap');
 
 :root {
-  --primary: #85A365; /* Verde Lottus (Predominante) */
-  --primary-light: #AEC295;
-  --secondary: #E8A5B3; /* Rosa Lottus (Destaques) */
-  --secondary-light: #F8E3E8;
-  --accent: #D4BA9E; /* Bege/Artesanal */
-  --neutral: #FAF9F6; /* Off-white suave */
-  --dark: #2F3E22; /* Verde muito escuro para alto contraste */
-  --text: #3D4238; /* Texto principal legível */
-  --white: #FFFFFF;
+  /* ── Paleta Oficial Lottus ── */
+  --rosa-claro:   #f8c9d0;   /* Fundo suave, hover cards */
+  --rosa-medio:   #f08faf;   /* Destaques, preços, tags */
+  --verde-escuro: #2d371f;   /* Texto principal, headers */
+  --verde-claro:  #d7dc84;   /* Acentos, bordas */
+  --verde-limao:  #90a624;   /* CTA primário, botões */
+  --verde-bebe:   #ededcb;   /* Background neutro */
+
+  /* ── Aliases do Sistema ── */
+  --primary:        var(--verde-limao);   /* #90a624 */
+  --primary-light:  var(--verde-claro);   /* #d7dc84 */
+  --secondary:      var(--rosa-medio);    /* #f08faf */
+  --secondary-light:var(--rosa-claro);    /* #f8c9d0 */
+  --accent:         var(--verde-claro);   /* #d7dc84 */
+  --neutral:        var(--verde-bebe);    /* #ededcb */
+  --dark:           var(--verde-escuro);  /* #2d371f */
+  --text:           #3a4228;             /* Verde escuro amaciado */
+  --white:          #FFFFFF;
+
   --transition: all 0.3s ease;
-  --shadow: 0 4px 20px rgba(133, 163, 101, 0.1);
-  --shadow-hover: 0 10px 30px rgba(133, 163, 101, 0.2);
+  --shadow:       0 4px 20px rgba(144, 166, 36, 0.12);
+  --shadow-hover: 0 10px 30px rgba(144, 166, 36, 0.22);
 }
 
 * {
@@ -27,13 +43,14 @@ html, body {
 }
 
 body {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Poppins', sans-serif;
   background-color: var(--neutral);
   color: var(--text);
   line-height: 1.6;
 }
 
-h1, q, h3, .brand-font {
+/* Títulos usam Playfair Display (equivalente elegante ao Nimbus em web) */
+h1, h2, h3, .brand-font {
   font-family: 'Playfair Display', serif;
 }
 

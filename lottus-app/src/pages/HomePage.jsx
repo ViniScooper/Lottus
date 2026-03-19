@@ -68,7 +68,7 @@ const FAQItem = ({ faq }) => {
 
 const HomePage = () => {
   useEffect(() => {
-    document.title = "Lottus Crochê | Início";
+    document.title = "Lottus Crochê | A Elegância do Feito à Mão";
   }, []);
 
   return (

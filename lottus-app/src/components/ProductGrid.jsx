@@ -3,12 +3,13 @@ import { Link } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import './ProductGrid.css';
 
-const API = 'http://localhost:3001';
+const API = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
-// /uploads/ é servido pelo Vite (public/uploads/) — não precisa do prefixo da API
+// Em produção, /uploads é servido pelo Render (API). Em dev, pelo Vite.
 const resolveImg = (url) => {
   if (!url) return '';
-  return url; // O browser resolve relativo ao origin atual (localhost:5173)
+  if (url.startsWith('/uploads')) return `${API}${url}`;
+  return url;
 };
 
 const ProductGrid = () => {

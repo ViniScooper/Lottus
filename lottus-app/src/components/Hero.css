@@ -3,10 +3,10 @@
   display: flex;
   align-items: center;
   position: relative;
-  background-color: #FAFAF9;
+  background-color: var(--neutral);
   /* Unificando fundo e overlay em um só lugar para evitar linhas de pixels */
   background: 
-    linear-gradient(rgba(250, 250, 249, 0.8), rgba(250, 250, 249, 0.8)),
+    linear-gradient(rgba(237, 237, 203, 0.8), rgba(237, 237, 203, 0.8)),
     url('../assets/branding/patterns/pattern_light.png');
   background-size: auto, 600px 600px;
   background-repeat: repeat;
@@ -88,7 +88,7 @@
   background: var(--secondary);
   color: white;
   transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(232, 165, 179, 0.2);
+  box-shadow: 0 10px 20px rgba(240, 143, 175, 0.2);
 }
 
 .hero-image {

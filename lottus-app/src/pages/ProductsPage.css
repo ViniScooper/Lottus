@@ -47,7 +47,7 @@
 .search-bar input:focus {
   outline: none;
   border-color: var(--secondary);
-  box-shadow: 0 0 10px rgba(232, 165, 179, 0.4);
+  box-shadow: 0 0 10px rgba(240, 143, 175, 0.3);
 }
 
 .filter-tabs {
@@ -73,7 +73,7 @@
   color: white;
   border-color: var(--secondary);
   transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(232, 165, 179, 0.3);
+  box-shadow: 0 4px 10px rgba(240, 143, 175, 0.3);
 }
 
 .products-grid-full {

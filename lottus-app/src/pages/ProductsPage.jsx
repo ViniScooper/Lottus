@@ -5,11 +5,12 @@ import Footer from '../components/Footer';
 import '../components/ProductGrid.css';
 import './ProductsPage.css';
 
-const API = 'http://localhost:3001';
+const API = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
-// /uploads/ é servido pelo Vite (public/uploads/) — sem prefixo
+// Em produção, /uploads é servido pelo Render. Em dev, pelo Vite.
 const resolveImg = (url) => {
   if (!url) return '';
+  if (url.startsWith('/uploads')) return `${API}${url}`;
   return url;
 };
 
@@ -22,7 +23,7 @@ const ProductsPage = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
-    document.title = 'Nossas Coleções | Lottus Crochê';
+    document.title = 'Coleção e Produtos | Lottus Crochê';
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     fetch(`${API}/products`)

@@ -20,8 +20,29 @@ if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 const prisma = new PrismaClient();
 const app = express();
 
-app.use(cors());
+// CORS — aceita o Vercel em produção e localhost em desenvolvimento
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:4173',
+  'https://lottus-eight.vercel.app',
+  /\.vercel\.app$/  // qualquer preview do Vercel
+];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Permite sem origin (ex: curl, mobile apps) ou origens na lista
+    if (!origin) return callback(null, true);
+    const allowed = allowedOrigins.some(o =>
+      typeof o === 'string' ? o === origin : o.test(origin)
+    );
+    callback(allowed ? null : new Error('CORS: origem não permitida'), allowed);
+  },
+  credentials: true
+}));
 app.use(express.json());
+
+// Serve as imagens de upload como arquivos estáticos (necessário no Render)
+app.use('/uploads', express.static(UPLOADS_DIR));
 
 // ============================================================
 // UPLOAD DE IMAGENS

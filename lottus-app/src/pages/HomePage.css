@@ -33,7 +33,7 @@
   right: 30px;
   font-family: 'Playfair Display', serif;
   font-size: 6rem;
-  color: rgba(232, 165, 179, 0.2); /* Rosa Lottus transparente */
+  color: rgba(240, 143, 175, 0.2); /* Novo Rosa Lottus transparente */
   line-height: 1;
 }
 
@@ -73,7 +73,7 @@
 
 /* FAQ Styles */
 .bg-light {
-  background-color: #FAFAF9;
+  background-color: var(--neutral);
 }
 
 .faq-section {

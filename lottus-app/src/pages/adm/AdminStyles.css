@@ -7,9 +7,9 @@
   --adm-surface: #1a1d27;
   --adm-surface-2: #22263a;
   --adm-border: rgba(255,255,255,0.07);
-  --adm-primary: #85A365;
-  --adm-primary-hover: #6d8b50;
-  --adm-secondary: #E8A5B3;
+  --adm-primary: #90a624;   /* Verde Limão */
+  --adm-primary-hover: #7a8c1e;
+  --adm-secondary: #f08faf; /* Rosa Médio */
   --adm-danger: #e05252;
   --adm-warning: #e0a050;
   --adm-success: #52a86e;
@@ -26,7 +26,7 @@
   min-height: 100vh;
   background: var(--adm-bg);
   color: var(--adm-text);
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
 
 /* ---- Sidebar ---- */
@@ -92,7 +92,7 @@
   cursor: pointer;
   transition: var(--adm-transition);
   text-decoration: none;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
 
 .adm-nav-item:hover {
@@ -214,7 +214,7 @@
   border-radius: 8px;
   color: var(--adm-text);
   padding: 12px 14px;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 0.95rem;
   transition: var(--adm-transition);
   outline: none;
@@ -255,7 +255,7 @@
   font-weight: 600;
   cursor: pointer;
   border: none;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Poppins', sans-serif;
   transition: var(--adm-transition);
   display: inline-flex;
   align-items: center;
@@ -335,6 +335,7 @@
   color: var(--adm-text-muted);
   line-height: 1.5;
   display: -webkit-box;
+  line-clamp: 2;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
@@ -460,7 +461,7 @@
   align-items: center;
   justify-content: center;
   padding: 20px;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
 
 .adm-login-card {
@@ -638,7 +639,7 @@
   padding: 8px 14px;
   font-size: 0.85rem;
   cursor: pointer;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Poppins', sans-serif;
   transition: var(--adm-transition);
   align-self: flex-start;
 }
@@ -667,7 +668,7 @@
   border-radius: 8px;
   color: var(--adm-text);
   padding: 10px 12px;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 0.85rem;
   outline: none;
 }

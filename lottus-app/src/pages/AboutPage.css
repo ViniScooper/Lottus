@@ -8,7 +8,7 @@
   text-align: center;
   /* Fundo similar ao Hero pra manter identidade visual */
   background: 
-    linear-gradient(rgba(250, 250, 249, 0.9), rgba(250, 250, 249, 0.9)),
+    linear-gradient(rgba(237, 237, 203, 0.9), rgba(237, 237, 203, 0.9)),
     url('../assets/branding/patterns/pattern_light.png');
   background-size: auto, 400px 400px;
   background-repeat: repeat;
@@ -124,7 +124,7 @@
   color: var(--white);
   padding: 10px 30px;
   font-size: 1.2rem;
-  box-shadow: 0 5px 15px rgba(232, 165, 179, 0.4);
+  box-shadow: 0 5px 15px rgba(240, 143, 175, 0.4);
 }
 
 .about-cta {
