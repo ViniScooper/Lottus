@@ -7,6 +7,8 @@
     "dev": "nodemon server.js",
     "start": "node server.js",
     "kill-port": "powershell -Command \"$p=(netstat -ano | findstr ':3001 ').Trim().Split()[-1]; if($p){Stop-Process -Id $p -Force -ErrorAction SilentlyContinue; Write-Host 'Porta 3001 liberada!'}\"",
+    "build": "npx prisma generate",
+    "postinstall": "npx prisma generate",
     "fresh": "npm run kill-port && npm run dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

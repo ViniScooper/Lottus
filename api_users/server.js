@@ -13,8 +13,17 @@ import { authMiddleware, JWT_SECRET } from './middleware/auth.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Pasta de destino dos uploads — dentro do public do front-end
-const UPLOADS_DIR = path.join(__dirname, '..', 'lottus-app', 'public', 'uploads');
+// Pasta de destino dos uploads
+// Em dev (local), salva no public do lottus-app para o Vite enxergar.
+// Em prod (Render), salva no próprio api_users.
+const UPLOADS_DEV = path.join(__dirname, '..', 'lottus-app', 'public', 'uploads');
+const UPLOADS_PROD = path.join(__dirname, 'uploads');
+
+// Se a pasta lottus-app estiver acima (local), usa ela; senão (prod), usa local
+const UPLOADS_DIR = fs.existsSync(path.join(__dirname, '..', 'lottus-app')) 
+  ? UPLOADS_DEV 
+  : UPLOADS_PROD;
+
 if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 
 const prisma = new PrismaClient();
