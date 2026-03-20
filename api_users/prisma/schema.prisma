@@ -31,7 +31,7 @@ model Product {
   category    String
   tag         String?
   description String
-  images      String[]
+  images      Json
   active      Boolean  @default(true)
   featured    Boolean  @default(false) // Aparece na Home (Nossas Peças)
   createdAt   DateTime @default(now())
