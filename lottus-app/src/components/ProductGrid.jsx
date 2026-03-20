@@ -15,15 +15,32 @@ const resolveImg = (url) => {
 const ProductGrid = () => {
   const [products, setProducts]           = useState([]);
   const [loading, setLoading]             = useState(true);
+  const [showColdStartInfo, setShowColdStartInfo] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  // Busca apenas produtos marcados como "featured" (Vitrine da Home)
-  useEffect(() => {
+  const fetchProducts = () => {
+    setLoading(true);
+    setShowColdStartInfo(false);
+    
+    // Timer para mostrar info de 'Acordando servidor' se demorar mais de 3s
+    const timer = setTimeout(() => setShowColdStartInfo(true), 3500);
+
     fetch(`${API}/products?featured=true`)
       .then(r => r.json())
-      .then(data => { setProducts(Array.isArray(data) ? data : []); setLoading(false); })
-      .catch(() => setLoading(false));
+      .then(data => { 
+        setProducts(Array.isArray(data) ? data : []); 
+        setLoading(false); 
+        clearTimeout(timer);
+      })
+      .catch(() => {
+        setLoading(false);
+        clearTimeout(timer);
+      });
+  };
+
+  useEffect(() => {
+    fetchProducts();
   }, []);
 
   const openModal = (product) => {
@@ -72,13 +89,25 @@ const ProductGrid = () => {
         </div>
 
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '60px', color: '#888' }}>Carregando peças...</div>
+          <div className="loading-container">
+            <div className="skeleton-grid">
+              {[1, 2, 3].map(i => <div key={i} className="skeleton-card" />)}
+            </div>
+            {showColdStartInfo && (
+              <div className="cold-start-info">
+                <div className="loader-spinner" style={{ margin: '0 auto 15px' }}></div>
+                <p><strong>Aguarde um instante...</strong></p>
+                <p>Estamos acordando nosso servidor 🧶<br/>Como usamos um serviço gratuito, a primeira carga do dia pode levar até 40 segundos.</p>
+              </div>
+            )}
+          </div>
         ) : products.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '60px', color: '#888' }}>
-            <p style={{ fontSize: '1.1rem' }}>Em breve novidades! 🧶</p>
-            <p style={{ fontSize: '0.9rem', marginTop: '8px' }}>
-              Enquanto isso, <Link to="/pecas" style={{ color: 'var(--primary)' }}>veja todo o catálogo</Link>.
+            <p style={{ fontSize: '1.2rem' }}>Ainda não temos peças em destaque aqui. 🧶</p>
+            <p style={{ fontSize: '0.9rem', marginTop: '12px' }}>
+              Mas você pode conferir o <Link to="/pecas" style={{ color: 'var(--primary)', fontWeight: '600' }}>catálogo completo clicando aqui</Link>.
             </p>
+            <button className="btn btn-outline" style={{ marginTop: '20px' }} onClick={fetchProducts}>Tentar Novamente</button>
           </div>
         ) : (
           <div className="product-grid">

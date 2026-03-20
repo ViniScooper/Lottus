@@ -5,19 +5,19 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id    String  @id @default(auto()) @map("_id") @db.ObjectId
+  id    String  @id @default(uuid())
   email String  @unique
   name  String?
   age   String?
 }
 
 model AdminUser {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  id           String   @id @default(uuid())
   email        String   @unique
   name         String
   passwordHash String
@@ -25,7 +25,7 @@ model AdminUser {
 }
 
 model Product {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  id          String   @id @default(uuid())
   name        String
   price       Float
   category    String
@@ -39,7 +39,7 @@ model Product {
 }
 
 model Post {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id @default(uuid())
   title     String
   content   String
   image     String?
@@ -49,7 +49,7 @@ model Post {
 }
 
 model SiteConfig {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  id    String @id @default(uuid())
   key   String @unique
   value String
 }

@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  mysql_db:
+    image: mysql:8.0
+    container_name: lottus_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword_lottus
+      MYSQL_DATABASE: lottus_db
+      MYSQL_USER: lottus_admin
+      MYSQL_PASSWORD: lottuspassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+
+  lottus_api:
+    build: .
+    container_name: lottus_api
+    restart: always
+    ports:
+      - "3001:3001"
+    environment:
+      - DATABASE_URL=mysql://lottus_admin:lottuspassword@mysql_db:3306/lottus_db?connection_limit=5
+      - JWT_SECRET=sua_chave_super_segura_jwt_lottus_2024
+    depends_on:
+      - mysql_db
+    volumes:
+      - ./uploads:/usr/src/app/uploads
+
+volumes:
+  mysql_data:

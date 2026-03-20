@@ -20,6 +20,12 @@ function App() {
       once: false,
       offset: 100,
     });
+
+    // --- WAKE UP PING (Render Cold Start Solution) ---
+    // Faz um ping silencioso na API para ela começar a acordar (cold start) 
+    // assim que o app carregar, sem esperar o usuário ir para a página de produtos.
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+    fetch(`${API_URL}/config`).catch(() => { /* ignora erro de ping */ });
   }, []);
 
   return (

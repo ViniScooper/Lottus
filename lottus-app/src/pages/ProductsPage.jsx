@@ -21,15 +21,30 @@ const ProductsPage = () => {
   const [selectedCategory, setSelectedCategory] = useState('Todas');
   const [selectedProduct, setSelectedProduct]   = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showColdStartInfo, setShowColdStartInfo] = useState(false);
+
+  const fetchProducts = () => {
+    setLoading(true);
+    setShowColdStartInfo(false);
+    const timer = setTimeout(() => setShowColdStartInfo(true), 3500);
+
+    fetch(`${API}/products`)
+      .then(r => r.json())
+      .then(data => { 
+        setAllProducts(Array.isArray(data) ? data : []); 
+        setLoading(false); 
+        clearTimeout(timer);
+      })
+      .catch(() => {
+        setLoading(false);
+        clearTimeout(timer);
+      });
+  };
 
   useEffect(() => {
     document.title = 'Coleção e Produtos | Lottus Crochê';
     window.scrollTo({ top: 0, behavior: 'smooth' });
-
-    fetch(`${API}/products`)
-      .then(r => r.json())
-      .then(data => { setAllProducts(Array.isArray(data) ? data : []); setLoading(false); })
-      .catch(() => setLoading(false));
+    fetchProducts();
   }, []);
 
   const openModal = (product) => {
@@ -110,8 +125,18 @@ const ProductsPage = () => {
         </section>
 
         {loading ? (
-          <div className="no-results">
-            <p>Carregando peças... 🧶</p>
+          <div className="loading-container">
+            <div className="skeleton-grid">
+              {[1, 2, 3, 4, 5, 6].map(i => <div key={i} className="skeleton-card" />)}
+            </div>
+            {showColdStartInfo && (
+              <div className="cold-start-info">
+                <div className="loader-spinner" style={{ margin: '0 auto 15px' }}></div>
+                <p><strong>Buscando catálogo...</strong></p>
+                <p>Estamos acordando nosso servidor 🧶<br/>Isso pode levar alguns segundos na primeira carga.</p>
+                <button className="btn btn-outline" style={{ marginTop: '20px' }} onClick={fetchProducts}>Recarregar Agora</button>
+              </div>
+            )}
           </div>
         ) : (
           <div className="products-grid-full">
