@@ -202,9 +202,74 @@ app.get('/products', async (req, res) => {
 
 app.get('/products/:id', async (req, res) => {
   try {
-    const product = await prisma.product.findUnique({ where: { id: req.params.id } });
+    const product = await prisma.product.findUnique({
+      where: { id: req.params.id },
+      include: { 
+        reviews: { orderBy: { createdAt: 'desc' } },
+        collection: true
+      }
+    });
     if (!product) return res.status(404).json({ error: 'Produto não encontrado.' });
     return res.status(200).json(product);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+// ============================================================
+// ROTAS PÚBLICAS — Coleções
+// ============================================================
+
+app.get('/collections', async (req, res) => {
+  try {
+    const collections = await prisma.collection.findMany({
+      include: { _count: { select: { products: true } } },
+      orderBy: { name: 'asc' }
+    });
+    return res.status(200).json(collections);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/collections/:id', async (req, res) => {
+  try {
+    const collection = await prisma.collection.findUnique({
+      where: { id: req.params.id },
+      include: { 
+        products: {
+          where: { active: true },
+          orderBy: { createdAt: 'desc' }
+        }
+      }
+    });
+    if (!collection) return res.status(404).json({ error: 'Coleção não encontrada.' });
+    return res.status(200).json(collection);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+// ============================================================
+// ROTAS PÚBLICAS — Reviews (leitura/criação livre)
+// ============================================================
+
+app.post('/products/:id/reviews', async (req, res) => {
+  const { name, email, review } = req.body;
+  const productId = req.params.id;
+
+  if (!name || !email || !review) {
+    return res.status(400).json({ error: 'Nome, email e comentário são obrigatórios.' });
+  }
+
+  try {
+    const product = await prisma.product.findUnique({ where: { id: productId } });
+    if (!product) return res.status(404).json({ error: 'Produto não encontrado.' });
+
+    const newReview = await prisma.review.create({
+      data: { name, email, review, productId }
+    });
+    return res.status(201).json(newReview);
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -215,10 +280,31 @@ app.get('/products/:id', async (req, res) => {
 // ============================================================
 
 app.post('/products', authMiddleware, async (req, res) => {
-  const { name, price, category, tag, description, images } = req.body;
+  const { name, price, category, tag, description, images, collectionName, collectionId } = req.body;
+  
   try {
+    let finalCollectionId = collectionId;
+
+    // Se passou nome mas não ID, tenta achar ou criar a coleção
+    if (collectionName && !finalCollectionId) {
+      const coll = await prisma.collection.upsert({
+        where: { name: collectionName },
+        update: {},
+        create: { name: collectionName }
+      });
+      finalCollectionId = coll.id;
+    }
+
     const product = await prisma.product.create({
-      data: { name, price: parseFloat(price), category, tag, description, images: images || [] }
+      data: { 
+        name, 
+        price: parseFloat(price), 
+        category, 
+        tag, 
+        description, 
+        images: images || [],
+        collectionId: finalCollectionId
+      }
     });
     return res.status(201).json(product);
   } catch (error) {
@@ -227,11 +313,32 @@ app.post('/products', authMiddleware, async (req, res) => {
 });
 
 app.put('/products/:id', authMiddleware, async (req, res) => {
-  const { name, price, category, tag, description, images, active, featured } = req.body;
+  const { name, price, category, tag, description, images, active, featured, collectionId, collectionName } = req.body;
   try {
+    let finalCollectionId = collectionId;
+
+    if (collectionName && !finalCollectionId) {
+      const coll = await prisma.collection.upsert({
+        where: { name: collectionName },
+        update: {},
+        create: { name: collectionName }
+      });
+      finalCollectionId = coll.id;
+    }
+
     const product = await prisma.product.update({
       where: { id: req.params.id },
-      data: { name, price: parseFloat(price), category, tag, description, images, active, featured }
+      data: { 
+        name, 
+        price: parseFloat(price), 
+        category, 
+        tag, 
+        description, 
+        images, 
+        active, 
+        featured,
+        collectionId: finalCollectionId
+      }
     });
     return res.status(200).json(product);
   } catch (error) {
@@ -260,6 +367,30 @@ app.delete('/products/:id', authMiddleware, async (req, res) => {
   try {
     await prisma.product.delete({ where: { id: req.params.id } });
     return res.status(200).json({ message: 'Produto deletado com sucesso.' });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+// ============================================================
+// ROTAS PROTEGIDAS — Coleções (CRUD admin)
+// ============================================================
+
+app.post('/collections', authMiddleware, async (req, res) => {
+  const { name } = req.body;
+  if (!name) return res.status(400).json({ error: 'Nome da coleção é obrigatório.' });
+  try {
+    const collection = await prisma.collection.create({ data: { name } });
+    return res.status(201).json(collection);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+app.delete('/collections/:id', authMiddleware, async (req, res) => {
+  try {
+    await prisma.collection.delete({ where: { id: req.params.id } });
+    return res.status(200).json({ message: 'Coleção deletada com sucesso.' });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }

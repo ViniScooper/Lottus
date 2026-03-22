@@ -25,17 +25,37 @@ model AdminUser {
 }
 
 model Product {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  price       Float
-  category    String
-  tag         String?
-  description String
-  images      String[]
-  active      Boolean  @default(true)
-  featured    Boolean  @default(false) // Aparece na Home (Nossas Peças)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id           String      @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  price        Float
+  category     String
+  tag          String?
+  description  String
+  images       String[]
+  active       Boolean     @default(true)
+  featured     Boolean     @default(false)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  reviews      Review[]
+  collectionId String?     @db.ObjectId
+  collection   Collection? @relation(fields: [collectionId], references: [id])
+}
+
+model Collection {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  name      String    @unique
+  products  Product[]
+  createdAt DateTime  @default(now())
+}
+
+model Review {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  email     String
+  review    String
+  productId String   @db.ObjectId
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 }
 
 model Post {

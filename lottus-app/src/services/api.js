@@ -146,3 +146,33 @@ export const updateConfig = async (configObject) => {
   if (!res.ok) throw new Error(data.error);
   return data;
 };
+
+// COLLECTIONS
+export const getCollections = async () => {
+  const res = await fetch(`${BASE_URL}/collections`);
+  return res.json();
+};
+
+export const getCollectionById = async (id) => {
+  const res = await fetch(`${BASE_URL}/collections/${id}`);
+  return res.json();
+};
+
+export const createCollection = async (collection) => {
+  const res = await fetch(`${BASE_URL}/collections`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...authHeader() },
+    body: JSON.stringify(collection)
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error);
+  return data;
+};
+
+export const deleteCollection = async (id) => {
+  const res = await fetch(`${BASE_URL}/collections/${id}`, {
+    method: 'DELETE',
+    headers: authHeader()
+  });
+  if (!res.ok) throw new Error('Erro ao deletar coleção');
+};

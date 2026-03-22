@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { getProducts, createProduct, updateProduct, deleteProduct } from '../../services/api';
+import { getProducts, createProduct, updateProduct, deleteProduct, getCollections } from '../../services/api';
 import ImageUploader from './ImageUploader';
 
-const emptyProduct = { name: '', price: '', category: 'Bolsas', tag: '', description: '', images: '' };
+const emptyProduct = { name: '', price: '', category: 'Bolsas', tag: '', description: '', images: '', collectionName: '' };
 
 const ProductsAdm = () => {
   const [products, setProducts] = useState([]);
+  const [collections, setCollections] = useState([]);
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState(emptyProduct);
   const [editingId, setEditingId] = useState(null);
@@ -16,13 +17,21 @@ const ProductsAdm = () => {
 
   const load = async () => {
     setLoading(true);
-    try { setProducts(await getProducts()); } finally { setLoading(false); }
+    try { 
+      const [prods, colls] = await Promise.all([getProducts(true), getCollections()]);
+      setProducts(prods);
+      setCollections(colls);
+    } finally { setLoading(false); }
   };
 
   useEffect(() => { load(); }, []);
 
   const handleEdit = (p) => {
-    setForm({ ...p, images: Array.isArray(p.images) ? p.images.join('\n') : p.images });
+    setForm({ 
+      ...p, 
+      images: Array.isArray(p.images) ? p.images.join('\n') : p.images,
+      collectionName: p.collection?.name || ''
+    });
     setEditingId(p.id);
     setShowForm(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -96,6 +105,20 @@ const ProductsAdm = () => {
             <div className="adm-form-group">
               <label>Tag (Badge)</label>
               <input value={form.tag} onChange={e => setForm({ ...form, tag: e.target.value })} placeholder="Ex: Bestseller, Novo, Premium" />
+            </div>
+          </div>
+          <div className="adm-form-row">
+            <div className="adm-form-group">
+              <label>Coleção (Ex: Inverno 2024, Especial X)</label>
+              <input 
+                list="collections-list"
+                value={form.collectionName} 
+                onChange={e => setForm({ ...form, collectionName: e.target.value })} 
+                placeholder="Nome da Coleção para agrupar"
+              />
+              <datalist id="collections-list">
+                {collections.map(c => <option key={c.id} value={c.name} />)}
+              </datalist>
             </div>
           </div>
           <div className="adm-form-group">

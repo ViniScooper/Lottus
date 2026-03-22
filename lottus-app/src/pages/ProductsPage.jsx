@@ -19,38 +19,59 @@ const ProductsPage = () => {
   const [loading, setLoading]             = useState(true);
   const [searchTerm, setSearchTerm]       = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Todas');
+  const [collections, setCollections] = useState([]);
+  const [selectedCollectionId, setSelectedCollectionId] = useState('all');
+  const [showCollections, setShowCollections]   = useState(false);
   const [selectedProduct, setSelectedProduct]   = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showColdStartInfo, setShowColdStartInfo] = useState(false);
+  
+  // Estados para reviews
+  const [reviewName, setReviewName] = useState('');
+  const [reviewEmail, setReviewEmail] = useState('');
+  const [reviewText, setReviewText]   = useState('');
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [reviewError, setReviewError] = useState('');
+  const [reviewSuccess, setReviewSuccess] = useState('');
 
-  const fetchProducts = () => {
+  const dataLoad = async () => {
     setLoading(true);
     setShowColdStartInfo(false);
     const timer = setTimeout(() => setShowColdStartInfo(true), 3500);
 
-    fetch(`${API}/products`)
-      .then(r => r.json())
-      .then(data => { 
-        setAllProducts(Array.isArray(data) ? data : []); 
-        setLoading(false); 
-        clearTimeout(timer);
-      })
-      .catch(() => {
-        setLoading(false);
-        clearTimeout(timer);
-      });
+    try {
+      const [pRes, cRes] = await Promise.all([
+        fetch(`${API}/products`),
+        fetch(`${API}/collections`)
+      ]);
+      const products = await pRes.json();
+      const colls = await cRes.json();
+
+      setAllProducts(Array.isArray(products) ? products : []); 
+      setCollections(Array.isArray(colls) ? colls : []);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false); 
+      clearTimeout(timer);
+    }
   };
 
   useEffect(() => {
     document.title = 'Coleção e Produtos | Lottus Crochê';
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    fetchProducts();
+    dataLoad();
   }, []);
 
   const openModal = (product) => {
-    setSelectedProduct(product);
     setCurrentImageIndex(0);
     document.body.style.overflow = 'hidden';
+    
+    // Busca detalhes do produto para pegar as reviews atualizadas
+    fetch(`${API}/products/${product.id}`)
+      .then(r => r.json())
+      .then(data => setSelectedProduct(data))
+      .catch(() => setSelectedProduct(product)); // Fallback para o produto da lista
   };
 
   const closeModal = () => {
@@ -80,13 +101,55 @@ const ProductsPage = () => {
     window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
   };
 
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+    if (!reviewName || !reviewEmail || !reviewText) {
+      setReviewError('Por favor, preencha todos os campos.');
+      return;
+    }
+
+    setIsSubmittingReview(true);
+    setReviewError('');
+    setReviewSuccess('');
+
+    try {
+      const res = await fetch(`${API}/products/${selectedProduct.id}/reviews`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: reviewName,
+          email: reviewEmail,
+          review: reviewText
+        })
+      });
+
+      if (!res.ok) throw new Error('Erro ao enviar avaliação.');
+
+      setReviewSuccess('Avaliação enviada com sucesso!');
+      setReviewName('');
+      setReviewEmail('');
+      setReviewText('');
+
+      // Recarrega o produto para mostrar a nova review
+      const productRes = await fetch(`${API}/products/${selectedProduct.id}`);
+      const updatedProduct = await productRes.json();
+      setSelectedProduct(updatedProduct);
+
+    } catch (err) {
+      setReviewError(err.message);
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
+
   // Categorias dinâmicas a partir dos dados da API
   const categories = ['Todas', ...Array.from(new Set(allProducts.map(p => p.category)))];
 
   const filteredProducts = allProducts.filter(product => {
     const matchesSearch   = product.name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === 'Todas' || product.category === selectedCategory;
-    return matchesSearch && matchesCategory;
+    const matchesCollection = selectedCollectionId === 'all' || product.collectionId === selectedCollectionId;
+    return matchesSearch && matchesCategory && matchesCollection;
   });
 
   const currentImg = selectedProduct
@@ -121,6 +184,40 @@ const ProductsPage = () => {
                 {cat}
               </button>
             ))}
+          </div>
+
+          <div className="collection-tabs-container" style={{ marginTop: '20px' }}>
+            <div className="collections-flag-container">
+              <button 
+                className={`collections-flag ${showCollections ? 'active' : ''}`}
+                onClick={() => setShowCollections(!showCollections)}
+              >
+                <span>{showCollections ? 'Ocultar Coleções' : 'Ver Coleções'}</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d={showCollections ? "M18 15l-6-6-6 6" : "M6 9l6 6 6-6"}/>
+                </svg>
+              </button>
+            </div>
+
+            <div className={`collection-tabs-wrapper ${showCollections ? 'open' : ''}`}>
+              <div className="collection-tabs" style={{ paddingBottom: '20px' }}>
+                <button 
+                  className={`collection-tab-btn ${selectedCollectionId === 'all' ? 'active' : ''}`}
+                  onClick={() => { setSelectedCollectionId('all'); setShowCollections(false); }}
+                >
+                  Catálogo Geral
+                </button>
+                {collections.filter(c => c._count?.products > 0).map(coll => (
+                  <button 
+                    key={coll.id}
+                    className={`collection-tab-btn ${selectedCollectionId === coll.id ? 'active' : ''}`}
+                    onClick={() => { setSelectedCollectionId(coll.id); setShowCollections(false); }}
+                  >
+                    {coll.name}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </section>
 
@@ -206,6 +303,71 @@ const ProductsPage = () => {
                   <button className="btn btn-primary modal-buy-btn" onClick={handleWhatsAppOrder}>
                     Pedir no WhatsApp
                   </button>
+
+                  {/* Seção de Avaliações */}
+                  <div className="modal-reviews-section">
+                    <hr className="modal-divider" />
+                    <h3 className="brand-font">Avaliações</h3>
+                    
+                    <div className="reviews-list">
+                      {selectedProduct.reviews?.length > 0 ? (
+                        selectedProduct.reviews.map((rev) => (
+                          <div key={rev.id} className="review-item">
+                            <div className="review-header">
+                              <span className="review-author">{rev.name}</span>
+                              <span className="review-date">
+                                {new Date(rev.createdAt).toLocaleDateString('pt-BR')}
+                              </span>
+                            </div>
+                            <p className="review-comment">{rev.review}</p>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="no-reviews">Ainda não há avaliações para esta peça. Seja o primeiro!</p>
+                      )}
+                    </div>
+
+                    <form className="review-form" onSubmit={handleReviewSubmit}>
+                      <h4 className="brand-font">Deixe sua avaliação</h4>
+                      <div className="form-group">
+                        <input
+                          type="text"
+                          placeholder="Seu Nome"
+                          value={reviewName}
+                          onChange={(e) => setReviewName(e.target.value)}
+                          required
+                        />
+                      </div>
+                      <div className="form-group">
+                        <input
+                          type="email"
+                          placeholder="Seu Email"
+                          value={reviewEmail}
+                          onChange={(e) => setReviewEmail(e.target.value)}
+                          required
+                        />
+                      </div>
+                      <div className="form-group">
+                        <textarea
+                          placeholder="Seu comentário sobre o produto..."
+                          value={reviewText}
+                          onChange={(e) => setReviewText(e.target.value)}
+                          required
+                        />
+                      </div>
+                      
+                      {reviewError && <p className="review-error">{reviewError}</p>}
+                      {reviewSuccess && <p className="review-success">{reviewSuccess}</p>}
+                      
+                      <button 
+                        type="submit" 
+                        className="btn btn-outline btn-sm" 
+                        disabled={isSubmittingReview}
+                      >
+                        {isSubmittingReview ? 'Enviando...' : 'Publicar Avaliação'}
+                      </button>
+                    </form>
+                  </div>
                 </div>
               </div>
             </div>

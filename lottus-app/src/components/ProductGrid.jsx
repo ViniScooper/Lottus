@@ -14,29 +14,78 @@ const resolveImg = (url) => {
 
 const ProductGrid = () => {
   const [products, setProducts]           = useState([]);
+  const [collections, setCollections]     = useState([]);
+  const [activeCollectionId, setActiveCollectionId] = useState('featured');
+  const [showCollections, setShowCollections]   = useState(false);
+  const [featuredCollection, setFeaturedCollection] = useState(null);
   const [loading, setLoading]             = useState(true);
   const [showColdStartInfo, setShowColdStartInfo] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  const fetchProducts = () => {
+  // Estados para reviews
+  const [reviewName, setReviewName] = useState('');
+  const [reviewEmail, setReviewEmail] = useState('');
+  const [reviewText, setReviewText]   = useState('');
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [reviewError, setReviewError] = useState('');
+  const [reviewSuccess, setReviewSuccess] = useState('');
+
+  const fetchProducts = async () => {
     setLoading(true);
     setShowColdStartInfo(false);
-    
-    // Timer para mostrar info de 'Acordando servidor' se demorar mais de 3s
     const timer = setTimeout(() => setShowColdStartInfo(true), 3500);
 
-    fetch(`${API}/products?featured=true`)
-      .then(r => r.json())
-      .then(data => { 
-        setProducts(Array.isArray(data) ? data : []); 
-        setLoading(false); 
-        clearTimeout(timer);
-      })
-      .catch(() => {
-        setLoading(false);
-        clearTimeout(timer);
-      });
+    try {
+      // 1. Busca configurações e coleções simultaneamente
+      const [cfgRes, collsRes] = await Promise.all([
+        fetch(`${API}/config`),
+        fetch(`${API}/collections`)
+      ]);
+      
+      const cfg = await cfgRes.json();
+      const colls = await collsRes.json();
+      
+      // Filtrar apenas coleções que possuem produtos
+      const activeColls = (Array.isArray(colls) ? colls : []).filter(c => c._count?.products > 0);
+      setCollections(activeColls);
+
+      // 2. Determina qual coleção/filtro mostrar primeiro
+      let initialCollId = 'featured';
+      if (cfg.featured_collection_id) {
+        initialCollId = cfg.featured_collection_id;
+      }
+      
+      setActiveCollectionId(initialCollId);
+      await loadCollectionProducts(initialCollId);
+
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+      clearTimeout(timer);
+    }
+  };
+
+  const loadCollectionProducts = async (collId) => {
+    try {
+      if (collId === 'featured') {
+        const res = await fetch(`${API}/products?featured=true`);
+        const data = await res.json();
+        setProducts(data);
+      } else {
+        const res = await fetch(`${API}/collections/${collId}`);
+        const data = await res.json();
+        setProducts(data.products || []);
+      }
+    } catch (err) {
+      console.error('Erro ao carregar produtos da coleção:', err);
+    }
+  };
+
+  const handleCollectionChange = (id) => {
+    setActiveCollectionId(id);
+    loadCollectionProducts(id);
   };
 
   useEffect(() => {
@@ -44,9 +93,14 @@ const ProductGrid = () => {
   }, []);
 
   const openModal = (product) => {
-    setSelectedProduct(product);
     setCurrentImageIndex(0);
     document.body.style.overflow = 'hidden';
+
+    // Busca detalhes do produto para pegar as reviews atualizadas
+    fetch(`${API}/products/${product.id}`)
+      .then(r => r.json())
+      .then(data => setSelectedProduct(data))
+      .catch(() => setSelectedProduct(product));
   };
 
   const closeModal = () => {
@@ -76,6 +130,47 @@ const ProductGrid = () => {
     window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
   };
 
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+    if (!reviewName || !reviewEmail || !reviewText) {
+      setReviewError('Por favor, preencha todos os campos.');
+      return;
+    }
+
+    setIsSubmittingReview(true);
+    setReviewError('');
+    setReviewSuccess('');
+
+    try {
+      const res = await fetch(`${API}/products/${selectedProduct.id}/reviews`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: reviewName,
+          email: reviewEmail,
+          review: reviewText
+        })
+      });
+
+      if (!res.ok) throw new Error('Erro ao enviar avaliação.');
+
+      setReviewSuccess('Avaliação enviada com sucesso!');
+      setReviewName('');
+      setReviewEmail('');
+      setReviewText('');
+
+      // Recarrega o produto para mostrar a nova review
+      const productRes = await fetch(`${API}/products/${selectedProduct.id}`);
+      const updatedProduct = await productRes.json();
+      setSelectedProduct(updatedProduct);
+
+    } catch (err) {
+      setReviewError(err.message);
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
+
   const currentImg = selectedProduct
     ? resolveImg(selectedProduct.images?.[currentImageIndex] || selectedProduct.images?.[0] || '')
     : '';
@@ -86,6 +181,40 @@ const ProductGrid = () => {
         <div className="section-header" data-aos="fade-up">
           <h2 className="section-title">Nossas Peças</h2>
           <p className="section-subtitle">Cada ponto conta uma história</p>
+
+          {/* Flag de Coleções */}
+          <div className="collections-flag-container">
+            <button 
+              className={`collections-flag ${showCollections ? 'active' : ''}`}
+              onClick={() => setShowCollections(!showCollections)}
+            >
+              <span>{showCollections ? 'Ocultar Coleções' : 'Ver Coleções'}</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d={showCollections ? "M18 15l-6-6-6 6" : "M6 9l6 6 6-6"}/>
+              </svg>
+            </button>
+          </div>
+
+          {/* Filtros de Coleção (Condicional) */}
+          <div className={`collection-tabs-wrapper ${showCollections ? 'open' : ''}`}>
+            <div className="collection-tabs">
+              <button 
+                className={`collection-tab-btn ${activeCollectionId === 'featured' ? 'active' : ''}`}
+                onClick={() => { handleCollectionChange('featured'); setShowCollections(false); }}
+              >
+                Destaques
+              </button>
+              {collections.map(coll => (
+                <button 
+                  key={coll.id}
+                  className={`collection-tab-btn ${activeCollectionId === coll.id ? 'active' : ''}`}
+                  onClick={() => { handleCollectionChange(coll.id); setShowCollections(false); }}
+                >
+                  {coll.name}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
         {loading ? (
@@ -165,6 +294,71 @@ const ProductGrid = () => {
                   <button className="btn btn-primary modal-buy-btn" onClick={handleWhatsAppOrder}>
                     Pedir no WhatsApp
                   </button>
+
+                  {/* Seção de Avaliações */}
+                  <div className="modal-reviews-section">
+                    <hr className="modal-divider" />
+                    <h3 className="brand-font">Avaliações</h3>
+                    
+                    <div className="reviews-list">
+                      {selectedProduct.reviews?.length > 0 ? (
+                        selectedProduct.reviews.map((rev) => (
+                          <div key={rev.id} className="review-item">
+                            <div className="review-header">
+                              <span className="review-author">{rev.name}</span>
+                              <span className="review-date">
+                                {new Date(rev.createdAt).toLocaleDateString('pt-BR')}
+                              </span>
+                            </div>
+                            <p className="review-comment">{rev.review}</p>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="no-reviews">Ainda não há avaliações para esta peça. Seja o primeiro!</p>
+                      )}
+                    </div>
+
+                    <form className="review-form" onSubmit={handleReviewSubmit}>
+                      <h4 className="brand-font">Deixe sua avaliação</h4>
+                      <div className="form-group">
+                        <input
+                          type="text"
+                          placeholder="Seu Nome"
+                          value={reviewName}
+                          onChange={(e) => setReviewName(e.target.value)}
+                          required
+                        />
+                      </div>
+                      <div className="form-group">
+                        <input
+                          type="email"
+                          placeholder="Seu Email"
+                          value={reviewEmail}
+                          onChange={(e) => setReviewEmail(e.target.value)}
+                          required
+                        />
+                      </div>
+                      <div className="form-group">
+                        <textarea
+                          placeholder="Seu comentário sobre o produto..."
+                          value={reviewText}
+                          onChange={(e) => setReviewText(e.target.value)}
+                          required
+                        />
+                      </div>
+                      
+                      {reviewError && <p className="review-error">{reviewError}</p>}
+                      {reviewSuccess && <p className="review-success">{reviewSuccess}</p>}
+                      
+                      <button 
+                        type="submit" 
+                        className="btn btn-outline btn-sm" 
+                        disabled={isSubmittingReview}
+                      >
+                        {isSubmittingReview ? 'Enviando...' : 'Publicar Avaliação'}
+                      </button>
+                    </form>
+                  </div>
                 </div>
               </div>
             </div>

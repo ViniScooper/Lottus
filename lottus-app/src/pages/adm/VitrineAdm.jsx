@@ -1,19 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { getProducts, setProductFeatured } from '../../services/api';
+import { getProducts, setProductFeatured, getCollections, getConfig, updateConfig, deleteCollection } from '../../services/api';
 
 // /uploads/ é servido pelo Vite (public/uploads/) — sem prefixo
 const resolveImg = (url) => url || '';
 
 const VitrineAdm = () => {
   const [products, setProducts] = useState([]);
+  const [collections, setCollections] = useState([]);
+  const [config, setConfig]       = useState({});
   const [loading, setLoading]   = useState(true);
   const [message, setMessage]   = useState('');
+  const [selectedCollId, setSelectedCollId] = useState('');
 
   const notify = (msg) => { setMessage(msg); setTimeout(() => setMessage(''), 3000); };
 
   const load = async () => {
     setLoading(true);
-    try { setProducts(await getProducts()); } finally { setLoading(false); }
+    try { 
+      const [prods, colls, cfg] = await Promise.all([getProducts(), getCollections(), getConfig()]);
+      setProducts(prods);
+      setCollections(colls);
+      setConfig(cfg);
+      if (cfg.featured_collection_id) setSelectedCollId(cfg.featured_collection_id);
+    } finally { setLoading(false); }
   };
 
   useEffect(() => { load(); }, []);
@@ -23,9 +32,30 @@ const VitrineAdm = () => {
       await setProductFeatured(product.id, !product.featured);
       notify(
         product.featured
-          ? `"${product.name}" removido da Home.`
-          : `"${product.name}" adicionado à Home! 🎉`
+          ? `"${product.name}" removido da Vitrine Geral.`
+          : `"${product.name}" adicionado à Vitrine Geral! 🎉`
       );
+      load();
+    } catch (err) {
+      notify('Erro: ' + err.message);
+    }
+  };
+
+  const saveFeaturedCollection = async () => {
+    try {
+      await updateConfig({ featured_collection_id: selectedCollId });
+      notify('Coleção em destaque atualizada! 🚀');
+      load();
+    } catch (err) {
+      notify('Erro: ' + err.message);
+    }
+  };
+
+  const handleDeleteCollection = async (id) => {
+    if (!confirm('Deseja excluir esta coleção? Os produtos não serão excluídos, apenas perderão o vínculo com ela.')) return;
+    try {
+      await deleteCollection(id);
+      notify('Coleção excluída! ✨');
       load();
     } catch (err) {
       notify('Erro: ' + err.message);
@@ -41,10 +71,36 @@ const VitrineAdm = () => {
 
       <div className="adm-vitrine-info">
         <p>
-          Gerencie quais produtos aparecem em destaque na <strong>Página Inicial</strong>, 
-          na seção <strong>"Nossas Peças"</strong>. Todos os produtos sempre aparecem na 
-          página <strong>/pecas</strong> automaticamente.
+          Gerencie quais produtos e coleções aparecem em destaque na <strong>Página Inicial</strong>.
         </p>
+      </div>
+
+      <div className="adm-vitrine-section featured-collection-manager">
+        <div className="adm-vitrine-section-header featured">
+          <span>🌟 Coleção em Destaque</span>
+          <small>Escolha qual coleção aparecerá primeiro na Home</small>
+        </div>
+        <div className="adm-config-row" style={{ marginTop: '20px', display: 'flex', gap: '10px' }}>
+          <select 
+            className="adm-input" 
+            style={{ width: 'auto' }}
+            value={selectedCollId} 
+            onChange={e => setSelectedCollId(e.target.value)}
+          >
+            <option value="">Nenhuma (Mostrar destaques avulsos)</option>
+            {collections.map(c => (
+              <option key={c.id} value={c.id}>{c.name} ({c._count.products} itens)</option>
+            ))}
+          </select>
+          <button className="adm-btn adm-btn-primary" onClick={saveFeaturedCollection}>
+            💾 Salvar Coleção
+          </button>
+        </div>
+        {config.featured_collection_id && (
+          <p style={{ marginTop: '10px', fontSize: '0.9rem', color: '#666' }}>
+            Atualmente exibindo: <strong>{collections.find(c => c.id === config.featured_collection_id)?.name || '...'}</strong>
+          </p>
+        )}
       </div>
 
       {loading ? (
@@ -122,6 +178,48 @@ const VitrineAdm = () => {
           )}
         </>
       )}
+
+      {/* Gerenciamento de Coleções */}
+      <div className="adm-vitrine-section">
+        <div className="adm-vitrine-section-header">
+          <span>📂 Todas as Coleções</span>
+          <small>{collections.length} coleções cadastradas</small>
+        </div>
+        <div className="adm-collections-list" style={{ marginTop: '20px' }}>
+          {collections.length === 0 ? (
+            <p className="adm-empty">Nenhuma coleção criada ainda.</p>
+          ) : (
+            <div className="adm-table-wrapper">
+              <table className="adm-table" style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ background: '#f9f9f9' }}>
+                    <th style={{ padding: '12px' }}>Nome</th>
+                    <th style={{ padding: '12px' }}>Produtos</th>
+                    <th style={{ padding: '12px' }}>Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {collections.map(c => (
+                    <tr key={c.id} style={{ borderBottom: '1px solid #eee' }}>
+                      <td style={{ padding: '12px' }}>{c.name}</td>
+                      <td style={{ padding: '12px' }}>{c._count?.products || 0} item(ns)</td>
+                      <td style={{ padding: '12px' }}>
+                        <button 
+                          className="adm-btn adm-btn-danger" 
+                          style={{ padding: '5px 10px', fontSize: '0.8rem' }}
+                          onClick={() => handleDeleteCollection(c.id)}
+                        >
+                          🗑️ Excluir
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

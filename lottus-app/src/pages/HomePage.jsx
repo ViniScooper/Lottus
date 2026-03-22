@@ -7,30 +7,6 @@ import Footer from '../components/Footer';
 import '../App.css';
 import './HomePage.css'; // Add este para estilos locais
 
-const testimonials = [
-  {
-    id: 1,
-    name: 'Vitória Silva',
-    text: 'A bolsa Boho superou todas as expectativas! Os detalhes são perfeitos e recebo elogios sempre que uso.',
-    role: 'Cliente Lottus',
-    rating: 5
-  },
-  {
-    id: 2,
-    name: 'Letícia Andrade',
-    text: 'Comprei o Kit Sousplat para dar de presente e o capricho da embalagem junto com a qualidade das peças me deixaram encantada!',
-    role: 'Cliente Lottus',
-    rating: 5
-  },
-  {
-    id: 3,
-    name: 'Camila Rocha',
-    text: 'A manta é pesadinha, super quente e lindíssima. A energia e o cuidado no tricô são palpáveis. Super recomendo!',
-    role: 'Cliente Lottus',
-    rating: 5
-  }
-];
-
 const faqs = [
   {
     question: 'Como faço para encomendar uma peça que não está no site?',
@@ -76,29 +52,6 @@ const HomePage = () => {
       <Hero />
       <ProductGrid />
       
-      {/* Depoimentos - Prova Social */}
-      <section className="testimonials">
-        <div className="container">
-          <div className="section-header" data-aos="fade-up">
-            <h2 className="section-title">O Que Dizem Nossas Clientes</h2>
-            <p className="section-subtitle">O carinho que volta em forma de palavras</p>
-          </div>
-          
-          <div className="testimonials-grid">
-            {testimonials.map((testi, i) => (
-              <div className="testimonial-card" key={testi.id} data-aos="fade-up" data-aos-delay={i * 150}>
-                <div className="stars">{'★'.repeat(testi.rating)}</div>
-                <p className="testi-text">"{testi.text}"</p>
-                <div className="testi-author">
-                  <span className="author-name brand-font">{testi.name}</span>
-                  <span className="author-role">{testi.role}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Dúvidas Frequentes (FAQ) */}
       <section className="faq-section bg-light">
         <div className="container">
