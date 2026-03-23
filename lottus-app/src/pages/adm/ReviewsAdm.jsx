@@ -66,7 +66,7 @@ const ReviewsAdm = () => {
           <div className="adm-table-wrapper">
             <table className="adm-table" style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
               <thead>
-                <tr style={{ background: '#f9f9f9' }}>
+                <tr style={{ background: 'var(--adm-surface-2)', color: 'var(--adm-text)' }}>
                   <th style={{ padding: '12px' }}>Data</th>
                   <th style={{ padding: '12px' }}>Produto</th>
                   <th style={{ padding: '12px' }}>Cliente</th>
@@ -76,8 +76,8 @@ const ReviewsAdm = () => {
               </thead>
               <tbody>
                 {reviews.map(r => (
-                  <tr key={r.id} style={{ borderBottom: '1px solid #eee' }}>
-                    <td style={{ padding: '12px', fontSize: '0.85rem', color: '#666' }}>
+                  <tr key={r.id} style={{ borderBottom: '1px solid var(--adm-border)' }}>
+                    <td style={{ padding: '12px', fontSize: '0.85rem', color: 'var(--adm-text-muted)' }}>
                       {new Date(r.createdAt).toLocaleDateString('pt-BR')}
                     </td>
                     <td style={{ padding: '12px' }}>
@@ -94,9 +94,9 @@ const ReviewsAdm = () => {
                     </td>
                     <td style={{ padding: '12px' }}>
                       <strong>{r.name}</strong><br/>
-                      <span style={{ fontSize: '0.8rem', color: '#888' }}>{r.email}</span>
+                      <span style={{ fontSize: '0.8rem', color: 'var(--adm-text-muted)' }}>{r.email}</span>
                     </td>
-                    <td style={{ padding: '12px', fontStyle: 'italic', color: '#444' }}>
+                    <td style={{ padding: '12px', fontStyle: 'italic', color: 'var(--adm-text)' }}>
                       "{r.review}"
                     </td>
                     <td style={{ padding: '12px', textAlign: 'center' }}>
