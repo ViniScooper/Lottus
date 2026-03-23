@@ -539,6 +539,128 @@ app.put('/config', authMiddleware, async (req, res) => {
 });
 
 // ============================================================
+// ROTAS PROTEGIDAS — Estoque (CRUD admin)
+// ============================================================
+
+app.get('/stock', authMiddleware, async (req, res) => {
+  try {
+    const items = await prisma.stockItem.findMany({ orderBy: { category: 'asc' } });
+    return res.status(200).json(items);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/stock', authMiddleware, async (req, res) => {
+  const { name, category, quantity, unit, minAlert } = req.body;
+  try {
+    const item = await prisma.stockItem.create({
+      data: {
+        name,
+        category: category || 'Outro',
+        quantity: parseInt(quantity) || 0,
+        unit: unit || 'unidades',
+        minAlert: parseInt(minAlert) || 5
+      }
+    });
+    return res.status(201).json(item);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+app.put('/stock/:id', authMiddleware, async (req, res) => {
+  const { name, category, quantity, unit, minAlert } = req.body;
+  try {
+    const item = await prisma.stockItem.update({
+      where: { id: req.params.id },
+      data: {
+        name,
+        category,
+        quantity: quantity !== undefined ? parseInt(quantity) : undefined,
+        unit,
+        minAlert: minAlert !== undefined ? parseInt(minAlert) : undefined
+      }
+    });
+    return res.status(200).json(item);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+app.delete('/stock/:id', authMiddleware, async (req, res) => {
+  try {
+    await prisma.stockItem.delete({ where: { id: req.params.id } });
+    return res.status(200).json({ message: 'Item de estoque deletado.' });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+// ============================================================
+// ROTAS PROTEGIDAS — Pedidos (CRUD admin)
+// ============================================================
+
+app.get('/orders', authMiddleware, async (req, res) => {
+  try {
+    const orders = await prisma.order.findMany({ orderBy: { createdAt: 'desc' } });
+    return res.status(200).json(orders);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/orders', authMiddleware, async (req, res) => {
+  const { clientName, description, saleType, value, dueDate, status, notes } = req.body;
+  try {
+    const order = await prisma.order.create({
+      data: {
+        clientName,
+        description,
+        saleType: saleType || 'SOB_ENCOMENDA',
+        value: value ? parseFloat(value) : null,
+        dueDate: dueDate ? new Date(dueDate) : null,
+        status: status || 'TODO',
+        notes: notes || null
+      }
+    });
+    return res.status(201).json(order);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+app.put('/orders/:id', authMiddleware, async (req, res) => {
+  const { clientName, description, saleType, value, dueDate, status, notes } = req.body;
+  try {
+    const order = await prisma.order.update({
+      where: { id: req.params.id },
+      data: {
+        clientName,
+        description,
+        saleType,
+        value: value !== undefined ? (value ? parseFloat(value) : null) : undefined,
+        dueDate: dueDate !== undefined ? (dueDate ? new Date(dueDate) : null) : undefined,
+        status,
+        notes
+      }
+    });
+    return res.status(200).json(order);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+app.delete('/orders/:id', authMiddleware, async (req, res) => {
+  try {
+    await prisma.order.delete({ where: { id: req.params.id } });
+    return res.status(200).json({ message: 'Pedido deletado.' });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+// ============================================================
 // START
 // ============================================================
 

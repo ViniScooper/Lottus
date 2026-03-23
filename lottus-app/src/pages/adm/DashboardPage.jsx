@@ -5,6 +5,8 @@ import ProductsAdm from './ProductsAdm';
 import VitrineAdm from './VitrineAdm';
 import ConfigAdm from './ConfigAdm';
 import ReviewsAdm from './ReviewsAdm';
+import StockAdm from './StockAdm';
+import OrdersAdm from './OrdersAdm';
 import './AdminStyles.css';
 
 const DashboardPage = () => {
@@ -26,10 +28,12 @@ const DashboardPage = () => {
   };
 
   const sections = [
-    { id: 'products', label: '📦 Produtos', icon: '📦' },
-    { id: 'vitrine',  label: '🏠 Vitrine',  icon: '🏠' },
-    { id: 'reviews',  label: '⭐ Avaliações',icon: '⭐' },
-    { id: 'config',  label: '⚙️ Site',     icon: '⚙️' },
+    { id: 'products', label: '📦 Produtos',    icon: '📦' },
+    { id: 'orders',   label: '🛋️ Pedidos',    icon: '🛋️' },
+    { id: 'stock',    label: '🧵 Estoque',    icon: '🧵' },
+    { id: 'vitrine',  label: '🏠 Vitrine',    icon: '🏠' },
+    { id: 'reviews',  label: '⭐ Avaliações', icon: '⭐' },
+    { id: 'config',   label: '⚙️ Site',       icon: '⚙️' },
   ];
 
   return (
@@ -79,6 +83,8 @@ const DashboardPage = () => {
           {activeSection === 'products' && <ProductsAdm />}
           {activeSection === 'vitrine'  && <VitrineAdm />}
           {activeSection === 'reviews'  && <ReviewsAdm />}
+          {activeSection === 'stock'    && <StockAdm />}
+          {activeSection === 'orders'   && <OrdersAdm />}
           {activeSection === 'config'   && <ConfigAdm />}
         </div>
       </main>

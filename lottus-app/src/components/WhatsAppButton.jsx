@@ -1,7 +1,12 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 import './WhatsAppButton.css';
 
 const WhatsAppButton = () => {
+  const location = useLocation();
+  
+  if (location.pathname.startsWith('/adm')) return null;
+
   const phoneNumber = "558192496177"; 
   const message = "Olá, Lottus! Gostaria de tirar algumas dúvidas.";
   

@@ -76,3 +76,27 @@ model SiteConfig {
   value String
 }
 
+model StockItem {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  category  String   @default("Outro")
+  quantity  Int      @default(0)
+  unit      String   @default("unidades")
+  minAlert  Int      @default(5)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  clientName  String
+  description String
+  saleType    String    @default("SOB_ENCOMENDA")
+  value       Float?
+  dueDate     DateTime?
+  status      String    @default("TODO")
+  notes       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+

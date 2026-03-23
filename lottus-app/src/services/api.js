@@ -200,3 +200,75 @@ export const deleteReview = async (id) => {
   });
   if (!res.ok) throw new Error('Erro ao deletar avaliação');
 };
+
+// ESTOQUE (ADMIN)
+export const getStock = async () => {
+  const res = await fetch(`${BASE_URL}/stock`, { headers: authHeader() });
+  return res.json();
+};
+
+export const createStockItem = async (data) => {
+  const res = await fetch(`${BASE_URL}/stock`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...authHeader() },
+    body: JSON.stringify(data)
+  });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error);
+  return json;
+};
+
+export const updateStockItem = async (id, data) => {
+  const res = await fetch(`${BASE_URL}/stock/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...authHeader() },
+    body: JSON.stringify(data)
+  });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error);
+  return json;
+};
+
+export const deleteStockItem = async (id) => {
+  const res = await fetch(`${BASE_URL}/stock/${id}`, {
+    method: 'DELETE',
+    headers: authHeader()
+  });
+  if (!res.ok) throw new Error('Erro ao deletar item');
+};
+
+// PEDIDOS (ADMIN)
+export const getOrders = async () => {
+  const res = await fetch(`${BASE_URL}/orders`, { headers: authHeader() });
+  return res.json();
+};
+
+export const createOrder = async (data) => {
+  const res = await fetch(`${BASE_URL}/orders`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...authHeader() },
+    body: JSON.stringify(data)
+  });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error);
+  return json;
+};
+
+export const updateOrder = async (id, data) => {
+  const res = await fetch(`${BASE_URL}/orders/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...authHeader() },
+    body: JSON.stringify(data)
+  });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error);
+  return json;
+};
+
+export const deleteOrder = async (id) => {
+  const res = await fetch(`${BASE_URL}/orders/${id}`, {
+    method: 'DELETE',
+    headers: authHeader()
+  });
+  if (!res.ok) throw new Error('Erro ao deletar pedido');
+};
