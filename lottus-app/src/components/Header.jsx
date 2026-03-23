@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { CartContext } from '../context/CartContext';
 import logo from '../assets/branding/brand_vars/logo_main.png';
 import './Header.css';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { cartCount, setIsCartOpen } = useContext(CartContext);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,6 +37,11 @@ const Header = () => {
         </nav>
 
         <div className="header-actions">
+           <button className="cart-toggle-btn" onClick={() => setIsCartOpen(true)} aria-label="Abrir Sacola" style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.5rem', position: 'relative', marginRight: '15px' }}>
+             <span className="cart-icon">🛒</span>
+             {cartCount > 0 && <span className="cart-badge" style={{ position: 'absolute', top: '-5px', right: '-10px', background: 'var(--primary)', color: 'white', borderRadius: '50%', padding: '2px 6px', fontSize: '0.7rem', fontWeight: 'bold' }}>{cartCount}</span>}
+           </button>
+
            <button className="menu-toggle" onClick={toggleMenu} aria-label="Abrir Menu">
              {isMenuOpen ? (
                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>

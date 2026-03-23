@@ -34,6 +34,7 @@ model Product {
   images       String[]
   active       Boolean     @default(true)
   featured     Boolean     @default(false)
+  status       String      @default("AVAILABLE")
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
   reviews      Review[]
@@ -53,6 +54,7 @@ model Review {
   name      String
   email     String
   review    String
+  approved  Boolean  @default(false)
   productId String   @db.ObjectId
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())

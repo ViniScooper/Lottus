@@ -4,6 +4,7 @@ import { removeToken } from '../../services/api';
 import ProductsAdm from './ProductsAdm';
 import VitrineAdm from './VitrineAdm';
 import ConfigAdm from './ConfigAdm';
+import ReviewsAdm from './ReviewsAdm';
 import './AdminStyles.css';
 
 const DashboardPage = () => {
@@ -27,6 +28,7 @@ const DashboardPage = () => {
   const sections = [
     { id: 'products', label: '📦 Produtos', icon: '📦' },
     { id: 'vitrine',  label: '🏠 Vitrine',  icon: '🏠' },
+    { id: 'reviews',  label: '⭐ Avaliações',icon: '⭐' },
     { id: 'config',  label: '⚙️ Site',     icon: '⚙️' },
   ];
 
@@ -76,6 +78,7 @@ const DashboardPage = () => {
         <div className="adm-content">
           {activeSection === 'products' && <ProductsAdm />}
           {activeSection === 'vitrine'  && <VitrineAdm />}
+          {activeSection === 'reviews'  && <ReviewsAdm />}
           {activeSection === 'config'   && <ConfigAdm />}
         </div>
       </main>

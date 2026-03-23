@@ -205,7 +205,10 @@ app.get('/products/:id', async (req, res) => {
     const product = await prisma.product.findUnique({
       where: { id: req.params.id },
       include: { 
-        reviews: { orderBy: { createdAt: 'desc' } },
+        reviews: { 
+          where: { approved: true },
+          orderBy: { createdAt: 'desc' } 
+        },
         collection: true
       }
     });
@@ -280,7 +283,7 @@ app.post('/products/:id/reviews', async (req, res) => {
 // ============================================================
 
 app.post('/products', authMiddleware, async (req, res) => {
-  const { name, price, category, tag, description, images, collectionName, collectionId } = req.body;
+  const { name, price, category, tag, description, images, collectionName, collectionId, status } = req.body;
   
   try {
     let finalCollectionId = collectionId;
@@ -303,7 +306,8 @@ app.post('/products', authMiddleware, async (req, res) => {
         tag, 
         description, 
         images: images || [],
-        collectionId: finalCollectionId
+        collectionId: finalCollectionId,
+        status: status || 'AVAILABLE'
       }
     });
     return res.status(201).json(product);
@@ -313,7 +317,7 @@ app.post('/products', authMiddleware, async (req, res) => {
 });
 
 app.put('/products/:id', authMiddleware, async (req, res) => {
-  const { name, price, category, tag, description, images, active, featured, collectionId, collectionName } = req.body;
+  const { name, price, category, tag, description, images, active, featured, collectionId, collectionName, status } = req.body;
   try {
     let finalCollectionId = collectionId;
 
@@ -337,7 +341,8 @@ app.put('/products/:id', authMiddleware, async (req, res) => {
         images, 
         active, 
         featured,
-        collectionId: finalCollectionId
+        collectionId: finalCollectionId,
+        status: status || 'AVAILABLE'
       }
     });
     return res.status(200).json(product);
@@ -391,6 +396,46 @@ app.delete('/collections/:id', authMiddleware, async (req, res) => {
   try {
     await prisma.collection.delete({ where: { id: req.params.id } });
     return res.status(200).json({ message: 'Coleção deletada com sucesso.' });
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+// ============================================================
+// ROTAS PROTEGIDAS — Reviews (CRUD admin)
+// ============================================================
+
+app.get('/reviews/pending', authMiddleware, async (req, res) => {
+  try {
+    const reviews = await prisma.review.findMany({
+      where: { approved: false },
+      include: {
+        product: { select: { name: true, images: true } }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+    return res.status(200).json(reviews);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+app.put('/reviews/:id/approve', authMiddleware, async (req, res) => {
+  try {
+    const review = await prisma.review.update({
+      where: { id: req.params.id },
+      data: { approved: true }
+    });
+    return res.status(200).json(review);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+app.delete('/reviews/:id', authMiddleware, async (req, res) => {
+  try {
+    await prisma.review.delete({ where: { id: req.params.id } });
+    return res.status(200).json({ message: 'Avaliação deletada com sucesso.' });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }

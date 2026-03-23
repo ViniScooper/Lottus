@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { createPortal } from 'react-dom';
+import { CartContext } from '../context/CartContext';
 import './ProductGrid.css';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001';
@@ -30,6 +31,8 @@ const ProductGrid = () => {
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const [reviewError, setReviewError] = useState('');
   const [reviewSuccess, setReviewSuccess] = useState('');
+
+  const { addToCart } = useContext(CartContext);
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -122,12 +125,10 @@ const ProductGrid = () => {
     }
   };
 
-  const handleWhatsAppOrder = () => {
+  const handleAddToCart = () => {
     if (!selectedProduct) return;
-    const phoneNumber = '558192496177';
-    const price = `R$ ${Number(selectedProduct.price).toFixed(2).replace('.', ',')}`;
-    const message = `Olá, Lottus! Gostei muito da *${selectedProduct.name}* (${price}). Gostaria de encomendar!`;
-    window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
+    addToCart(selectedProduct);
+    closeModal();
   };
 
   const handleReviewSubmit = async (e) => {
@@ -175,12 +176,20 @@ const ProductGrid = () => {
     ? resolveImg(selectedProduct.images?.[currentImageIndex] || selectedProduct.images?.[0] || '')
     : '';
 
+  // Determina título e subtítulo dinâmicos
+  const activeColl = activeCollectionId === 'featured'
+    ? { name: 'Nossas Peças', subtitle: 'Cada ponto conta uma história' }
+    : collections.find(c => c.id === activeCollectionId);
+
+  const displayTitle = activeColl?.name || 'Coleção';
+  const displaySubtitle = activeColl?.subtitle || (activeCollectionId === 'featured' ? 'Cada ponto conta uma história' : 'Coleção Exclusiva Lottus');
+
   return (
     <section id="products" className="products">
       <div className="container">
         <div className="section-header" data-aos="fade-up">
-          <h2 className="section-title">Nossas Peças</h2>
-          <p className="section-subtitle">Cada ponto conta uma história</p>
+          <h2 className="section-title">{displayTitle}</h2>
+          <p className="section-subtitle">{displaySubtitle}</p>
 
           {/* Flag de Coleções */}
           <div className="collections-flag-container">
@@ -250,7 +259,9 @@ const ProductGrid = () => {
               >
                 <div className="product-image">
                   <img src={resolveImg(product.images?.[0])} alt={product.name} />
-                  {product.tag && <span className="product-tag">{product.tag}</span>}
+                  {product.status === 'OUT_OF_STOCK' && <span className="product-tag" style={{background: '#e74c3c'}}>Esgotado</span>}
+                  {product.status === 'MADE_TO_ORDER' && <span className="product-tag" style={{background: '#f39c12'}}>Sob Encomenda</span>}
+                  {product.tag && product.status !== 'OUT_OF_STOCK' && product.status !== 'MADE_TO_ORDER' && <span className="product-tag">{product.tag}</span>}
                 </div>
                 <div className="product-info">
                   <h3>{product.name}</h3>
@@ -291,8 +302,13 @@ const ProductGrid = () => {
                   <p className="modal-price">R$ {Number(selectedProduct.price).toFixed(2).replace('.', ',')}</p>
                   {selectedProduct.tag && <span className="product-tag" style={{ display: 'inline-block', marginBottom: '12px' }}>{selectedProduct.tag}</span>}
                   <p className="modal-desc">{selectedProduct.description}</p>
-                  <button className="btn btn-primary modal-buy-btn" onClick={handleWhatsAppOrder}>
-                    Pedir no WhatsApp
+                  <button 
+                    className="btn btn-primary modal-buy-btn" 
+                    onClick={handleAddToCart}
+                    disabled={selectedProduct.status === 'OUT_OF_STOCK'}
+                    style={selectedProduct.status === 'OUT_OF_STOCK' ? { background: '#ccc', cursor: 'not-allowed', borderColor: '#ccc' } : {}}
+                  >
+                    {selectedProduct.status === 'OUT_OF_STOCK' ? 'Esgotado' : 'Adicionar à Sacola 🛍️'}
                   </button>
 
                   {/* Seção de Avaliações */}

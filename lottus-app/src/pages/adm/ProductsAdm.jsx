@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getProducts, createProduct, updateProduct, deleteProduct, getCollections } from '../../services/api';
 import ImageUploader from './ImageUploader';
 
-const emptyProduct = { name: '', price: '', category: 'Bolsas', tag: '', description: '', images: '', collectionName: '' };
+const emptyProduct = { name: '', price: '', category: 'Bolsas', tag: '', description: '', images: '', collectionName: '', status: 'AVAILABLE' };
 
 const ProductsAdm = () => {
   const [products, setProducts] = useState([]);
@@ -103,7 +103,17 @@ const ProductsAdm = () => {
               </select>
             </div>
             <div className="adm-form-group">
-              <label>Tag (Badge)</label>
+              <label>Status (Estoque) *</label>
+              <select value={form.status || 'AVAILABLE'} onChange={e => setForm({ ...form, status: e.target.value })}>
+                <option value="AVAILABLE">Pronta Entrega</option>
+                <option value="MADE_TO_ORDER">Sob Encomenda</option>
+                <option value="OUT_OF_STOCK">Esgotado</option>
+              </select>
+            </div>
+          </div>
+          <div className="adm-form-row">
+            <div className="adm-form-group">
+              <label>Tag (Badge Promocional)</label>
               <input value={form.tag} onChange={e => setForm({ ...form, tag: e.target.value })} placeholder="Ex: Bestseller, Novo, Premium" />
             </div>
           </div>
@@ -167,6 +177,8 @@ const ProductsAdm = () => {
               {p.images?.[0] && <img src={p.images[0]} alt={p.name} className="adm-card-img" />}
               <div className="adm-card-body">
                 <span className="adm-badge">{p.category}</span>
+                {p.status === 'OUT_OF_STOCK' && <span className="adm-badge" style={{background: '#e74c3c', color: 'white'}}>Esgotado</span>}
+                {p.status === 'MADE_TO_ORDER' && <span className="adm-badge" style={{background: '#f39c12', color: 'white'}}>Sob Encomenda</span>}
                 {p.tag && <span className="adm-badge adm-badge-pink">{p.tag}</span>}
                 <h4>{p.name}</h4>
                 <p className="adm-price">R$ {Number(p.price).toFixed(2).replace('.', ',')}</p>

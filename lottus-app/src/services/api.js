@@ -176,3 +176,27 @@ export const deleteCollection = async (id) => {
   });
   if (!res.ok) throw new Error('Erro ao deletar coleção');
 };
+
+// REVIEWS (ADMIN)
+export const getPendingReviews = async () => {
+  const res = await fetch(`${BASE_URL}/reviews/pending`, { headers: authHeader() });
+  return res.json();
+};
+
+export const approveReview = async (id) => {
+  const res = await fetch(`${BASE_URL}/reviews/${id}/approve`, {
+    method: 'PUT',
+    headers: authHeader()
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error);
+  return data;
+};
+
+export const deleteReview = async (id) => {
+  const res = await fetch(`${BASE_URL}/reviews/${id}`, {
+    method: 'DELETE',
+    headers: authHeader()
+  });
+  if (!res.ok) throw new Error('Erro ao deletar avaliação');
+};

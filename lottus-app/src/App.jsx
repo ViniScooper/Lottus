@@ -11,6 +11,8 @@ import WhatsAppButton from './components/WhatsAppButton';
 import PrivateRoute from './components/PrivateRoute';
 import LoginPage from './pages/adm/LoginPage';
 import DashboardPage from './pages/adm/DashboardPage';
+import { CartProvider } from './context/CartContext';
+import CartSidebar from './components/CartSidebar';
 import './App.css';
 
 function App() {
@@ -29,9 +31,10 @@ function App() {
   }, []);
 
   return (
-    <Router>
-      <div className="app">
-        <Routes>
+    <CartProvider>
+      <Router>
+        <div className="app">
+          <Routes>
           {/* Rotas Públicas do Site */}
           <Route path="/" element={
             <>
@@ -52,10 +55,14 @@ function App() {
           } />
         </Routes>
 
-        {/* WhatsApp só aparece nas páginas públicas */}
-        <WhatsAppButton />
-      </div>
-    </Router>
+          {/* WhatsApp só aparece nas páginas públicas */}
+          <WhatsAppButton />
+        </div>
+        
+        {/* Sacola Lateral */}
+        <CartSidebar />
+      </Router>
+    </CartProvider>
   );
 }
 
