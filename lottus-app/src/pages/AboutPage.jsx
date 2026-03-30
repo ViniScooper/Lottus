@@ -1,12 +1,18 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
+import { ConfigContext } from '../context/ConfigContext';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import './AboutPage.css';
 
 const AboutPage = () => {
+  const { config } = useContext(ConfigContext);
+  
+  const title = config?.about_title || 'Nossa História';
+  const description = config?.about_description || 'A Lottus nasceu de uma paixão genuína pela arte do fazer manual. O que antes era apenas um hobby cultivado em tardes tranquilas, um ponto de cada vez, transformou-se no sonho de compartilhar afeto através do crochê.';
+
   useEffect(() => {
-    document.title = "Nossa História | Lottus Crochê";
-  }, []);
+    document.title = `${title} | Lottus Crochê`;
+  }, [title]);
 
   return (
     <div className="about-page">
@@ -15,7 +21,7 @@ const AboutPage = () => {
       <main className="about-content">
         <section className="about-hero">
           <div className="container">
-            <h1 className="brand-font about-title">Nossa História</h1>
+            <h1 className="brand-font about-title">{title}</h1>
             <p className="about-subtitle">Como os fios se entrelaçaram para criar a Lottus.</p>
           </div>
         </section>
@@ -25,9 +31,7 @@ const AboutPage = () => {
             <div className="story-text">
               <h2 className="brand-font">O Começo de Tudo</h2>
               <p>
-                A Lottus nasceu de uma paixão genuína pela arte do fazer manual. O que antes era apenas
-                um hobby cultivado em tardes tranquilas, um ponto de cada vez, transformou-se no sonho
-                de compartilhar afeto através do crochê.
+                {description}
               </p>
               <p>
                 O nome "Lottus" (Lótus) foi escolhido por sua simbologia de pureza, renascimento e 

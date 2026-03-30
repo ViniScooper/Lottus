@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useLocation } from 'react-router-dom';
+import { ConfigContext } from '../context/ConfigContext';
 import './WhatsAppButton.css';
 
 const WhatsAppButton = () => {
   const location = useLocation();
   
+  const { config } = useContext(ConfigContext);
+  
   if (location.pathname.startsWith('/adm')) return null;
 
-  const phoneNumber = "558192496177"; 
+  const phoneNumber = config?.whatsapp_number || "558192496177"; 
   const message = "Olá, Lottus! Gostaria de tirar algumas dúvidas.";
   
   const wpUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;

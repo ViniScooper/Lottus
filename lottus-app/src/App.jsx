@@ -11,6 +11,7 @@ import WhatsAppButton from './components/WhatsAppButton';
 import PrivateRoute from './components/PrivateRoute';
 import LoginPage from './pages/adm/LoginPage';
 import DashboardPage from './pages/adm/DashboardPage';
+import { ConfigProvider } from './context/ConfigContext';
 import { CartProvider } from './context/CartContext';
 import CartSidebar from './components/CartSidebar';
 import './App.css';
@@ -31,8 +32,9 @@ function App() {
   }, []);
 
   return (
-    <CartProvider>
-      <Router>
+    <ConfigProvider>
+      <CartProvider>
+        <Router>
         <div className="app">
           <Routes>
           {/* Rotas Públicas do Site */}
@@ -61,8 +63,9 @@ function App() {
         
         {/* Sacola Lateral */}
         <CartSidebar />
-      </Router>
-    </CartProvider>
+        </Router>
+      </CartProvider>
+    </ConfigProvider>
   );
 }
 

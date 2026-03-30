@@ -1,8 +1,11 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react';
+import { ConfigContext } from './ConfigContext';
 
 export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
+  const { config } = useContext(ConfigContext);
+
   const [cartItems, setCartItems] = useState(() => {
     const saved = localStorage.getItem('lottus_cart');
     return saved ? JSON.parse(saved) : [];
@@ -46,7 +49,7 @@ export const CartProvider = ({ children }) => {
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
   const getWhatsAppLink = () => {
-    const phoneNumber = '558192496177';
+    const phoneNumber = config?.whatsapp_number || '558192496177';
     let text = `Olá, Lottus! Gostaria de fazer o seguinte pedido:\n\n`;
     
     cartItems.forEach(item => {

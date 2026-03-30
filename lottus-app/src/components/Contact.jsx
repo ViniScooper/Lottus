@@ -1,7 +1,23 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { ConfigContext } from '../context/ConfigContext';
 import './Contact.css';
 
 const Contact = () => {
+  const { config } = useContext(ConfigContext);
+  
+  const locationText = config?.location || 'Recife, PE';
+  const emailText = config?.email || 'contato@lottuscroche.com.br';
+  const whatsappNumber = config?.whatsapp_number || '558192496177';
+  const instagramText = config?.instagram_handle || '@lottuscroche';
+
+  // formatação básica do número de telefone se for BR
+  const formatPhone = (num) => {
+    if (num.length >= 12 && num.startsWith('55')) {
+      return `(${num.substring(2,4)}) ${num.substring(4,9)}-${num.substring(9)}`;
+    }
+    return num;
+  };
+
   return (
     <section id="contact" className="contact">
       <div className="container contact-container">
@@ -14,29 +30,29 @@ const Contact = () => {
               <div className="contact-icon">📍</div>
               <div>
                 <h4>Localização</h4>
-                <p>Recife, PE</p>
+                <p>{locationText}</p>
               </div>
             </div>
             <div className="contact-item">
               <div className="contact-icon">📧</div>
               <div>
                 <h4>Email</h4>
-                <p>contato@lottuscroche.com.br</p>
+                <p>{emailText}</p>
               </div>
             </div>
             <div className="contact-item">
               <div className="contact-icon">📱</div>
               <div>
                 <h4>WhatsApp</h4>
-                <p>(81) 9249-6177</p>
+                <p>{formatPhone(whatsappNumber)}</p>
               </div>
             </div>
           </div>
           
           <div className="social-links">
-            <a href="#" className="social-link">
+            <a href={`https://instagram.com/${instagramText.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="social-link">
                <img src="/src/assets/branding/icons/icon_insta.png" alt="Instagram" style={{width: '24px', height: '24px'}} />
-               <span>@lottuscroche</span>
+               <span>{instagramText}</span>
             </a>
           </div>
         </div>

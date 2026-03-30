@@ -1,15 +1,22 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { ConfigContext } from '../context/ConfigContext';
 import './Hero.css';
 
 const Hero = () => {
+  const { config } = useContext(ConfigContext);
+  
+  const title = config?.hero_title || 'A elegância do crochê em cada detalhe.';
+  const subtitle = config?.hero_subtitle || 'Feito à mão, com amor';
+  const description = config?.hero_description || 'Peças exclusivas, artesanais e pensadas para trazer conforto e estilo ao seu dia a dia. Conheça a nossa coleção Lottus.';
+
   return (
     <section id="home" className="hero">
       <div className="container hero-container">
         <div className="hero-content" data-aos="fade-right">
-          <span className="hero-subtitle">Feito à mão, com amor</span>
-          <h2 className="hero-title">A elegância do crochê em cada detalhe.</h2>
+          <span className="hero-subtitle">{subtitle}</span>
+          <h2 className="hero-title">{title}</h2>
           <p className="hero-description">
-            Peças exclusivas, artesanais e pensadas para trazer conforto e estilo ao seu dia a dia. Conheça a nossa coleção Lottus.
+            {description}
           </p>
           <div className="hero-btns">
             <a href="#products" className="btn btn-primary">Ver Coleção</a>
