@@ -7,6 +7,8 @@ import ConfigAdm from './ConfigAdm';
 import ReviewsAdm from './ReviewsAdm';
 import StockAdm from './StockAdm';
 import OrdersAdm from './OrdersAdm';
+import FaqAdm from './FaqAdm';
+import AboutAdm from './AboutAdm';
 import './AdminStyles.css';
 
 const DashboardPage = () => {
@@ -32,7 +34,9 @@ const DashboardPage = () => {
     { id: 'orders',   label: '🛋️ Pedidos',    icon: '🛋️' },
     { id: 'stock',    label: '🧵 Estoque',    icon: '🧵' },
     { id: 'vitrine',  label: '🏠 Vitrine',    icon: '🏠' },
+    { id: 'about',    label: '📖 História',   icon: '📖' },
     { id: 'reviews',  label: '⭐ Avaliações', icon: '⭐' },
+    { id: 'faqs',     label: '❓ Dúvidas',    icon: '❓' },
     { id: 'config',   label: '⚙️ Site',       icon: '⚙️' },
   ];
 
@@ -82,7 +86,9 @@ const DashboardPage = () => {
         <div className="adm-content">
           {activeSection === 'products' && <ProductsAdm />}
           {activeSection === 'vitrine'  && <VitrineAdm />}
+          {activeSection === 'about'    && <AboutAdm />}
           {activeSection === 'reviews'  && <ReviewsAdm />}
+          {activeSection === 'faqs'     && <FaqAdm />}
           {activeSection === 'stock'    && <StockAdm />}
           {activeSection === 'orders'   && <OrdersAdm />}
           {activeSection === 'config'   && <ConfigAdm />}

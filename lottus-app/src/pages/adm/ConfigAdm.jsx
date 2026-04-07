@@ -8,9 +8,7 @@ const CONFIG_FIELDS = [
   { key: 'whatsapp_number',  label: 'Número WhatsApp (só números)',type: 'text',     placeholder: '558192496177' },
   { key: 'instagram_handle', label: 'Instagram (@usuario)',         type: 'text',     placeholder: '@lottuscroche' },
   { key: 'location',         label: 'Cidade/Localização',           type: 'text',     placeholder: 'Recife, PE' },
-  { key: 'email',            label: 'Email de Contato',             type: 'email',    placeholder: 'contato@lottuscroche.com.br' },
-  { key: 'about_title',      label: 'Título da Página Sobre',       type: 'text',     placeholder: 'Nossa História' },
-  { key: 'about_description',label: 'Descrição da Página Sobre',   type: 'textarea', placeholder: 'A Lottus nasceu de...' },
+  { key: 'email',            label: 'Email de Contato',             type: 'email',    placeholder: 'contato@lottuscroche.com.br' }
 ];
 
 const ConfigAdm = () => {

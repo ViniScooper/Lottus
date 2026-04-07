@@ -6,8 +6,9 @@ import Contact from '../components/Contact';
 import Footer from '../components/Footer';
 import '../App.css';
 import './HomePage.css'; // Add este para estilos locais
+import { getConfig } from '../services/api';
 
-const faqs = [
+const faqsDefault = [
   {
     question: 'Como faço para encomendar uma peça que não está no site?',
     answer: 'Nós amamos projetos personalizados! Basta clicar no botão flutuante do WhatsApp e mandar uma foto ou ideia do que você deseja. Vamos conversar sobre cores e o prazo de produção ideal para você.'
@@ -43,8 +44,22 @@ const FAQItem = ({ faq }) => {
 };
 
 const HomePage = () => {
+  const [faqs, setFaqs] = useState(faqsDefault);
+
   useEffect(() => {
     document.title = "Lottus Crochê | A Elegância do Feito à Mão";
+    getConfig().then((data) => {
+      if (data && data.faqs) {
+        try {
+          const parsed = JSON.parse(data.faqs);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setFaqs(parsed);
+          }
+        } catch(e) {
+          console.error("Erro ao parsear as FAQs:", e);
+        }
+      }
+    });
   }, []);
 
   return (
