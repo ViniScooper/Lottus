@@ -192,7 +192,7 @@ const VitrineAdm = () => {
             <div className="adm-table-wrapper">
               <table className="adm-table" style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr style={{ background: '#f9f9f9' }}>
+                  <tr style={{ background: 'var(--adm-surface-2)' }}>
                     <th style={{ padding: '12px' }}>Nome</th>
                     <th style={{ padding: '12px' }}>Produtos</th>
                     <th style={{ padding: '12px' }}>Ações</th>
@@ -200,7 +200,7 @@ const VitrineAdm = () => {
                 </thead>
                 <tbody>
                   {collections.map(c => (
-                    <tr key={c.id} style={{ borderBottom: '1px solid #eee' }}>
+                    <tr key={c.id} style={{ borderBottom: '1px solid var(--adm-border)' }}>
                       <td style={{ padding: '12px' }}>{c.name}</td>
                       <td style={{ padding: '12px' }}>{c._count?.products || 0} item(ns)</td>
                       <td style={{ padding: '12px' }}>
