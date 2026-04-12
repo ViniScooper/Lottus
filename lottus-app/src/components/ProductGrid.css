@@ -306,14 +306,25 @@
 .modal-image {
   height: 100%;
   position: relative;
+  overflow: hidden;
 }
 
-.modal-image img {
+.modal-image-blur {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  backdrop-filter: blur(25px);
+  background: rgba(255, 255, 255, 0.2);
+  z-index: 1;
+}
+
+.modal-image img.modal-main-img {
   width: 100%;
   height: 100%;
   object-fit: contain;
   display: block;
   transition: opacity 0.3s ease;
+  position: relative;
+  z-index: 2;
 }
 
 .gallery-controls {
@@ -325,6 +336,7 @@
   justify-content: space-between;
   transform: translateY(-50%);
   padding: 0 10px;
+  z-index: 3;
 }
 
 .gallery-btn {
@@ -356,6 +368,7 @@
   display: flex;
   justify-content: center;
   gap: 8px;
+  z-index: 3;
 }
 
 .dot {

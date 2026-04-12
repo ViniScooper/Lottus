@@ -275,8 +275,9 @@ const ProductGrid = () => {
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
               <button className="modal-close" onClick={closeModal}>&times;</button>
               <div className="modal-body">
-                <div className="modal-image">
-                  <img src={currentImg} alt={selectedProduct.name} />
+                <div className="modal-image" style={{ backgroundImage: `url(${currentImg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+                  <div className="modal-image-blur"></div>
+                  <img src={currentImg} alt={selectedProduct.name} className="modal-main-img" />
                   {selectedProduct.images?.length > 1 && (
                     <>
                       <div className="gallery-controls">
