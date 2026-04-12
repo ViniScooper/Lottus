@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { getConfig, updateConfig } from '../../services/api';
+import ImageUploader from './ImageUploader';
 
 const CONFIG_FIELDS = [
+  { key: 'hero_image',       label: 'Imagem Principal da Tela Inicial', type: 'image' },
   { key: 'hero_title',       label: 'Título Principal (Hero)',      type: 'text',     placeholder: 'A elegância do crochê em cada detalhe.' },
   { key: 'hero_subtitle',    label: 'Subtítulo (Feito à mão...)',   type: 'text',     placeholder: 'Feito à mão, com amor' },
   { key: 'hero_description', label: 'Descrição do Hero',           type: 'textarea', placeholder: 'Peças exclusivas, artesanais...' },
@@ -49,13 +51,19 @@ const ConfigAdm = () => {
       <form className="adm-form adm-config-form" onSubmit={handleSave}>
         {CONFIG_FIELDS.map(field => (
           <div className="adm-form-group" key={field.key}>
-            <label>{field.label}</label>
+            {field.type !== 'image' && <label>{field.label}</label>}
             {field.type === 'textarea' ? (
               <textarea
                 rows={3}
                 value={config[field.key] || ''}
                 onChange={e => setConfig({ ...config, [field.key]: e.target.value })}
                 placeholder={field.placeholder}
+              />
+            ) : field.type === 'image' ? (
+              <ImageUploader 
+                label={field.label}
+                value={config[field.key] || ''}
+                onChange={url => setConfig({ ...config, [field.key]: url })}
               />
             ) : (
               <input

@@ -8,6 +8,7 @@ const Hero = () => {
   const title = config?.hero_title || 'A elegância do crochê em cada detalhe.';
   const subtitle = config?.hero_subtitle || 'Feito à mão, com amor';
   const description = config?.hero_description || 'Peças exclusivas, artesanais e pensadas para trazer conforto e estilo ao seu dia a dia. Conheça a nossa coleção Lottus.';
+  const heroImage = config?.hero_image || '/images/crochet_bag_1773664603233.png';
 
   return (
     <section id="home" className="hero">
@@ -25,7 +26,7 @@ const Hero = () => {
         </div>
         <div className="hero-image" data-aos="fade-left">
            <div className="image-wrapper">
-             <img src="/images/crochet_bag_1773664603233.png" alt="Lottus Crochet Bag" />
+             <img src={heroImage} alt="Lottus Crochet Bag" />
              <div className="image-badge">Handmade</div>
            </div>
         </div>
