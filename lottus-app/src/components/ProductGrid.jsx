@@ -257,12 +257,10 @@ const ProductGrid = () => {
                 data-aos="fade-up"
                 data-aos-delay={index * 100}
               >
-                <div className="product-image">
-                  <img src={resolveImg(product.images?.[0])} alt={product.name} />
-                  {product.status === 'OUT_OF_STOCK' && <span className="product-tag" style={{background: '#e74c3c'}}>Esgotado</span>}
-                  {product.status === 'MADE_TO_ORDER' && <span className="product-tag" style={{background: '#f39c12'}}>Sob Encomenda</span>}
-                  {product.tag && product.status !== 'OUT_OF_STOCK' && product.status !== 'MADE_TO_ORDER' && <span className="product-tag">{product.tag}</span>}
-                </div>
+                  <div className="product-image">
+                    <img src={resolveImg(product.images?.[0])} alt={product.name} />
+                    {product.tag && <span className="product-tag">{product.tag}</span>}
+                  </div>
                 <div className="product-info">
                   <h3>{product.name}</h3>
                   <p className="price">R$ {Number(product.price).toFixed(2).replace('.', ',')}</p>
