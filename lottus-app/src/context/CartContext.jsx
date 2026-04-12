@@ -49,7 +49,8 @@ export const CartProvider = ({ children }) => {
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
   const getWhatsAppLink = () => {
-    const phoneNumber = config?.whatsapp_number || '558192496177';
+    const phoneNumber = config?.whatsapp_number || '5581992496177';
+    const cleanPhone = phoneNumber.replace(/\D/g, '');
     let text = `Olá, Lottus! Gostaria de fazer o seguinte pedido:\n\n`;
     
     cartItems.forEach(item => {
@@ -62,7 +63,7 @@ export const CartProvider = ({ children }) => {
     text += `*Valor Total dos Produtos: R$ ${cartTotal.toFixed(2).replace('.', ',')}*\n\n`;
     text += `Aguardo o cálculo do frete e os detalhes para pagamento. Obrigado!`;
     
-    return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(text)}`;
+    return `https://api.whatsapp.com/send/?phone=${cleanPhone}&text=${encodeURIComponent(text)}&type=phone_number&app_absent=0`;
   };
 
   const checkout = () => {

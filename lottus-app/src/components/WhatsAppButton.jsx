@@ -10,10 +10,11 @@ const WhatsAppButton = () => {
   
   if (location.pathname.startsWith('/adm')) return null;
 
-  const phoneNumber = config?.whatsapp_number || "558192496177"; 
+  const phoneNumber = config?.whatsapp_number || "5581992496177"; 
+  const cleanPhone = phoneNumber.replace(/\D/g, '');
   const message = "Olá, Lottus! Gostaria de tirar algumas dúvidas.";
   
-  const wpUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+  const wpUrl = `https://api.whatsapp.com/send/?phone=${cleanPhone}&text=${encodeURIComponent(message)}&type=phone_number&app_absent=0`;
 
   return (
     <a href={wpUrl} target="_blank" rel="noopener noreferrer" className="floating-whatsapp" aria-label="Falar no WhatsApp">
