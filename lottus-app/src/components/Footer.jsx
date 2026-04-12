@@ -8,7 +8,7 @@ const Footer = () => {
       <div className="container">
         <div className="footer-content">
           <div className="footer-brand">
-            <h2 className="brand-font">LOTTUS</h2>
+            <h2 className="brand-font">Lottus</h2>
             <p>Artesanato com alma e propósito. Criando peças únicas para momentos especiais.</p>
           </div>
           <div className="footer-links">
