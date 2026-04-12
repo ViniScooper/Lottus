@@ -3,15 +3,20 @@ import { ConfigContext } from '../context/ConfigContext';
 import './Hero.css';
 
 const Hero = () => {
-  const { config } = useContext(ConfigContext);
+  const { config, loadingConfig } = useContext(ConfigContext);
   
   const title = config?.hero_title || 'A elegância do crochê em cada detalhe.';
-  const subtitle = config?.hero_subtitle || 'Feito à mão, com amor';
+  const subtitle = config?.hero_subtitle || 'CROCHÊ COM CARINHA DE BRASILIDADE';
   const description = config?.hero_description || 'Peças exclusivas, artesanais e pensadas para trazer conforto e estilo ao seu dia a dia. Conheça a nossa coleção Lottus.';
   const heroImage = config?.hero_image || '/images/crochet_bag_1773664603233.png';
 
+  const fadeStyle = {
+    opacity: loadingConfig ? 0 : 1,
+    transition: 'opacity 0.4s ease'
+  };
+
   return (
-    <section id="home" className="hero">
+    <section id="home" className="hero" style={fadeStyle}>
       <div className="container hero-container">
         <div className="hero-content" data-aos="fade-right">
           <span className="hero-subtitle">{subtitle}</span>
