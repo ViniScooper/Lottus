@@ -54,13 +54,14 @@ const ProductsAdm = () => {
     };
       console.log('--- DEBUG SUBMIT ---');
       console.log('Payload Final:', payload);
-      if (editingId) {
-        await updateProduct(editingId, payload);
-        notify('Produto atualizado! ✅');
-      } else {
-        await createProduct(payload);
-        notify('Produto criado! ✅');
-      }
+      try {
+        if (editingId) {
+          await updateProduct(editingId, payload);
+          notify('Produto atualizado! ✅');
+        } else {
+          await createProduct(payload);
+          notify('Produto criado! ✅');
+        }
       setForm(emptyProduct);
       setEditingId(null);
       setShowForm(false);
