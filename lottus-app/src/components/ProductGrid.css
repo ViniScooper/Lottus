@@ -307,13 +307,23 @@
   height: 100%;
   position: relative;
   overflow: hidden;
+  background-color: var(--white);
+}
+
+.modal-image-bg {
+  position: absolute;
+  top: -10%; left: -10%; right: -10%; bottom: -10%;
+  background-size: cover;
+  background-position: center;
+  filter: blur(30px);
+  opacity: 0.6;
+  z-index: 0;
 }
 
 .modal-image-blur {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  backdrop-filter: blur(25px);
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.5);
   z-index: 1;
 }
 
@@ -325,6 +335,7 @@
   transition: opacity 0.3s ease;
   position: relative;
   z-index: 2;
+  filter: drop-shadow(0 15px 30px rgba(0,0,0,0.1));
 }
 
 .gallery-controls {
