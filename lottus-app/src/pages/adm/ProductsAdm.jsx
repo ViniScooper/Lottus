@@ -205,6 +205,11 @@ const ProductsAdm = () => {
                 {p.tag && <span className="adm-badge adm-badge-pink">{p.tag}</span>}
                 <h4>{p.name}</h4>
                 <p className="adm-price">R$ {Number(p.price).toFixed(2).replace('.', ',')}</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--adm-text-muted)' }}>Fundo:</span>
+                  <div style={{ width: '16px', height: '16px', borderRadius: '50%', backgroundColor: p.bgColor || '#ffffff', border: '1px solid var(--adm-border)' }}></div>
+                  <small style={{ fontSize: '0.75rem', color: 'var(--adm-text-muted)' }}>{p.bgColor || '#ffffff'}</small>
+                </div>
                 <p className="adm-desc">{p.description}</p>
               </div>
               <div className="adm-card-actions">
