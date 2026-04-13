@@ -29,6 +29,7 @@ const ProductsAdm = () => {
   const handleEdit = (p) => {
     setForm({ 
       ...p, 
+      bgColor: p.bgColor || '#ffffff',
       images: Array.isArray(p.images) ? p.images.join('\n') : p.images,
       collectionName: p.collection?.name || ''
     });
@@ -51,6 +52,7 @@ const ProductsAdm = () => {
       price: parseFloat(form.price),
       images: form.images.split('\n').map(s => s.trim()).filter(Boolean)
     };
+    console.log('📤 Enviando payload para API:', payload);
     try {
       if (editingId) {
         await updateProduct(editingId, payload);
