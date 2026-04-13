@@ -298,7 +298,7 @@ app.post('/products', authMiddleware, async (req, res) => {
       finalCollectionId = coll.id;
     }
 
-    console.log(`💾 Salvando produto: ${name}`, { bgColor });
+    console.log(`[DEBUG] Criando produto: ${name}`, { bgColor Escolhida: bgColor });
     const product = await prisma.product.create({
       data: { 
         name, 
@@ -312,7 +312,7 @@ app.post('/products', authMiddleware, async (req, res) => {
         status: status || 'AVAILABLE'
       }
     });
-    console.log(`✅ Produto criado com sucesso: ${product.id}`, { savedBgColor: product.bgColor });
+    console.log(`[DEBUG] Produto criado no DB: ${product.id}`, { bgColorSalva: product.bgColor });
     return res.status(201).json(product);
   } catch (error) {
     console.error(`❌ Erro ao criar produto: ${error.message}`);
@@ -324,7 +324,7 @@ app.put('/products/:id', authMiddleware, async (req, res) => {
   const { name, price, category, tag, description, images, active, featured, collectionId, collectionName, status, bgColor } = req.body;
   try {
     let finalCollectionId = collectionId;
-    console.log(`💾 Atualizando produto ${req.params.id}: ${name}`, { bgColor });
+    console.log(`[DEBUG] Atualizando produto ${req.params.id}: ${name}`, { bgColor Enviada: bgColor });
 
     if (collectionName && !finalCollectionId) {
       const coll = await prisma.collection.upsert({
@@ -351,7 +351,7 @@ app.put('/products/:id', authMiddleware, async (req, res) => {
         status: status || 'AVAILABLE'
       }
     });
-    console.log(`✅ Produto atualizado: ${product.id}`, { savedBgColor: product.bgColor });
+    console.log(`[DEBUG] Produto atualizado no DB: ${product.id}`, { bgColorSalva: product.bgColor });
     return res.status(200).json(product);
   } catch (error) {
     return res.status(500).json({ error: error.message });

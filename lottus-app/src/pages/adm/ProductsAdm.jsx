@@ -52,8 +52,8 @@ const ProductsAdm = () => {
       price: parseFloat(form.price),
       images: form.images.split('\n').map(s => s.trim()).filter(Boolean)
     };
-    console.log('📤 Enviando payload para API:', payload);
-    try {
+      console.log('--- DEBUG SUBMIT ---');
+      console.log('Payload Final:', payload);
       if (editingId) {
         await updateProduct(editingId, payload);
         notify('Produto atualizado! ✅');
