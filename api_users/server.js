@@ -283,7 +283,7 @@ app.post('/products/:id/reviews', async (req, res) => {
 // ============================================================
 
 app.post('/products', authMiddleware, async (req, res) => {
-  const { name, price, category, tag, description, images, collectionName, collectionId, status } = req.body;
+  const { name, price, category, tag, description, images, collectionName, collectionId, status, bgColor } = req.body;
   
   try {
     let finalCollectionId = collectionId;
@@ -306,6 +306,7 @@ app.post('/products', authMiddleware, async (req, res) => {
         tag, 
         description, 
         images: images || [],
+        bgColor,
         collectionId: finalCollectionId,
         status: status || 'AVAILABLE'
       }
@@ -317,7 +318,7 @@ app.post('/products', authMiddleware, async (req, res) => {
 });
 
 app.put('/products/:id', authMiddleware, async (req, res) => {
-  const { name, price, category, tag, description, images, active, featured, collectionId, collectionName, status } = req.body;
+  const { name, price, category, tag, description, images, active, featured, collectionId, collectionName, status, bgColor } = req.body;
   try {
     let finalCollectionId = collectionId;
 
@@ -341,6 +342,7 @@ app.put('/products/:id', authMiddleware, async (req, res) => {
         images, 
         active, 
         featured,
+        bgColor,
         collectionId: finalCollectionId,
         status: status || 'AVAILABLE'
       }

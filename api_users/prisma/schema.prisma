@@ -32,6 +32,7 @@ model Product {
   tag          String?
   description  String
   images       String[]
+  bgColor      String?
   active       Boolean     @default(true)
   featured     Boolean     @default(false)
   status       String      @default("AVAILABLE")

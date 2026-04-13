@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getProducts, createProduct, updateProduct, deleteProduct, getCollections } from '../../services/api';
 import ImageUploader from './ImageUploader';
 
-const emptyProduct = { name: '', price: '', category: 'Bolsas', tag: '', description: '', images: '', collectionName: '', status: 'AVAILABLE' };
+const emptyProduct = { name: '', price: '', category: 'Bolsas', tag: '', description: '', images: '', collectionName: '', status: 'AVAILABLE', bgColor: '#ffffff' };
 
 const ProductsAdm = () => {
   const [products, setProducts] = useState([]);
@@ -115,6 +115,24 @@ const ProductsAdm = () => {
             <div className="adm-form-group">
               <label>Tag (Badge Promocional)</label>
               <input value={form.tag} onChange={e => setForm({ ...form, tag: e.target.value })} placeholder="Ex: Bestseller, Novo, Premium" />
+            </div>
+            <div className="adm-form-group">
+              <label>Cor de Fundo da Imagem (Modal)</label>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <input 
+                  type="color" 
+                  value={form.bgColor || '#ffffff'} 
+                  onChange={e => setForm({ ...form, bgColor: e.target.value })}
+                  style={{ width: '42px', height: '42px', padding: '0', cursor: 'pointer', border: '1px solid var(--adm-border)' }}
+                />
+                <input 
+                  type="text" 
+                  value={form.bgColor || '#ffffff'} 
+                  onChange={e => setForm({ ...form, bgColor: e.target.value })} 
+                  placeholder="Ex: #f5f5f5" 
+                  style={{ flex: 1 }}
+                />
+              </div>
             </div>
           </div>
           <div className="adm-form-row">
