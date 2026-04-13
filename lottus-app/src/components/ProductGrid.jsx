@@ -235,7 +235,7 @@ const ProductGrid = () => {
               <div className="cold-start-info">
                 <div className="loader-spinner" style={{ margin: '0 auto 15px' }}></div>
                 <p><strong>Aguarde um instante...</strong></p>
-                <p>Estamos acordando nosso servidor 🧶<br/>Como usamos um serviço gratuito, a primeira carga do dia pode levar até 40 segundos.</p>
+                <p>Aguarde por favor 🧶<br/>!.</p>
               </div>
             )}
           </div>
