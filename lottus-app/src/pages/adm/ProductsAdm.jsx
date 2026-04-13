@@ -52,8 +52,6 @@ const ProductsAdm = () => {
       price: parseFloat(form.price),
       images: form.images.split('\n').map(s => s.trim()).filter(Boolean)
     };
-      console.log('--- DEBUG SUBMIT ---');
-      console.log('Payload Final:', payload);
       try {
         if (editingId) {
           await updateProduct(editingId, payload);
