@@ -29,7 +29,7 @@ const faqsDefault = [
 
 const FAQItem = ({ faq }) => {
   const [isOpen, setIsOpen] = useState(false);
-  
+
   return (
     <div className={`faq-item ${isOpen ? 'active' : ''}`} onClick={() => setIsOpen(!isOpen)}>
       <div className="faq-question">
@@ -47,7 +47,7 @@ const HomePage = () => {
   const [faqs, setFaqs] = useState(faqsDefault);
 
   useEffect(() => {
-    document.title = "Lottus Crochê | A Elegância do Feito à Mão";
+    document.title = "Lottus Crochê";
     getConfig().then((data) => {
       if (data && data.faqs) {
         try {
@@ -55,7 +55,7 @@ const HomePage = () => {
           if (Array.isArray(parsed) && parsed.length > 0) {
             setFaqs(parsed);
           }
-        } catch(e) {
+        } catch (e) {
           console.error("Erro ao parsear as FAQs:", e);
         }
       }
@@ -66,7 +66,7 @@ const HomePage = () => {
     <>
       <Hero />
       <ProductGrid />
-      
+
       {/* Dúvidas Frequentes (FAQ) */}
       <section className="faq-section bg-light">
         <div className="container">
@@ -74,7 +74,7 @@ const HomePage = () => {
             <h2 className="section-title">Dúvidas Frequentes</h2>
             <p className="section-subtitle">Tudo o que você precisa saber antes de encomendar</p>
           </div>
-          
+
           <div className="faq-container" data-aos="fade-up" data-aos-delay="200">
             {faqs.map((faq, index) => (
               <FAQItem key={index} faq={faq} />
