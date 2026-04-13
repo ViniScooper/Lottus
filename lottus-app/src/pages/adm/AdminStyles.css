@@ -334,9 +334,9 @@
   font-size: 0.85rem;
   color: var(--adm-text-muted);
   line-height: 1.5;
+  white-space: pre-wrap;
   display: -webkit-box;
-  line-clamp: 2;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }

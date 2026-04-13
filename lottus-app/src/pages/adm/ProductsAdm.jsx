@@ -133,7 +133,10 @@ const ProductsAdm = () => {
           </div>
           <div className="adm-form-group">
             <label>Descrição *</label>
-            <textarea required rows={3} value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Descreva a peça..." />
+            <textarea required rows={6} value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Descreva a peça... Use Enter para pular linhas." />
+            <small style={{ color: 'var(--adm-text-muted)', fontSize: '0.75rem', marginTop: '4px' }}>
+              Dica: Você pode pular linhas para organizar melhor a descrição.
+            </small>
           </div>
           <ImageUploader
             label="Foto Principal da Peça *"
