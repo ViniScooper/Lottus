@@ -42,8 +42,8 @@ const ProductGrid = () => {
     try {
       // 1. Busca configurações e coleções simultaneamente
       const [cfgRes, collsRes] = await Promise.all([
-        fetch(`${API}/config`),
-        fetch(`${API}/collections`)
+        fetch(`${API}/config?t=${Date.now()}`),
+        fetch(`${API}/collections?t=${Date.now()}`)
       ]);
       
       const cfg = await cfgRes.json();
@@ -73,11 +73,11 @@ const ProductGrid = () => {
   const loadCollectionProducts = async (collId) => {
     try {
       if (collId === 'featured') {
-        const res = await fetch(`${API}/products?featured=true`);
+        const res = await fetch(`${API}/products?featured=true&t=${Date.now()}`);
         const data = await res.json();
         setProducts(data);
       } else {
-        const res = await fetch(`${API}/collections/${collId}`);
+        const res = await fetch(`${API}/collections/${collId}?t=${Date.now()}`);
         const data = await res.json();
         setProducts(data.products || []);
       }

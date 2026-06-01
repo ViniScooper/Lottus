@@ -46,7 +46,7 @@ export const register = async (email, name, password) => {
 
 // PRODUCTS
 export const getProducts = async (all = false) => {
-  const url = all ? `${BASE_URL}/products?all=true` : `${BASE_URL}/products`;
+  const url = all ? `${BASE_URL}/products?all=true&t=${Date.now()}` : `${BASE_URL}/products?t=${Date.now()}`;
   const res = await fetch(url);
   return res.json();
 };
@@ -95,7 +95,7 @@ export const setProductFeatured = async (id, featured) => {
 
 // POSTS
 export const getPosts = async (publishedOnly = false) => {
-  const url = publishedOnly ? `${BASE_URL}/posts?published=true` : `${BASE_URL}/posts`;
+  const url = publishedOnly ? `${BASE_URL}/posts?published=true&t=${Date.now()}` : `${BASE_URL}/posts?t=${Date.now()}`;
   const res = await fetch(url);
   return res.json();
 };
@@ -132,7 +132,7 @@ export const deletePost = async (id) => {
 
 // SITE CONFIG
 export const getConfig = async () => {
-  const res = await fetch(`${BASE_URL}/config`);
+  const res = await fetch(`${BASE_URL}/config?t=${Date.now()}`);
   return res.json();
 };
 
@@ -149,12 +149,12 @@ export const updateConfig = async (configObject) => {
 
 // COLLECTIONS
 export const getCollections = async () => {
-  const res = await fetch(`${BASE_URL}/collections`);
+  const res = await fetch(`${BASE_URL}/collections?t=${Date.now()}`);
   return res.json();
 };
 
 export const getCollectionById = async (id) => {
-  const res = await fetch(`${BASE_URL}/collections/${id}`);
+  const res = await fetch(`${BASE_URL}/collections/${id}?t=${Date.now()}`);
   return res.json();
 };
 
@@ -179,7 +179,7 @@ export const deleteCollection = async (id) => {
 
 // REVIEWS (ADMIN)
 export const getPendingReviews = async () => {
-  const res = await fetch(`${BASE_URL}/reviews/pending`, { headers: authHeader() });
+  const res = await fetch(`${BASE_URL}/reviews/pending?t=${Date.now()}`, { headers: authHeader() });
   return res.json();
 };
 
@@ -203,7 +203,7 @@ export const deleteReview = async (id) => {
 
 // ESTOQUE (ADMIN)
 export const getStock = async () => {
-  const res = await fetch(`${BASE_URL}/stock`, { headers: authHeader() });
+  const res = await fetch(`${BASE_URL}/stock?t=${Date.now()}`, { headers: authHeader() });
   return res.json();
 };
 
@@ -239,7 +239,7 @@ export const deleteStockItem = async (id) => {
 
 // PEDIDOS (ADMIN)
 export const getOrders = async () => {
-  const res = await fetch(`${BASE_URL}/orders`, { headers: authHeader() });
+  const res = await fetch(`${BASE_URL}/orders?t=${Date.now()}`, { headers: authHeader() });
   return res.json();
 };
 

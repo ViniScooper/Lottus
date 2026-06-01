@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { uploadImage } from '../../services/api';
 
 /**
@@ -13,6 +13,11 @@ const ImageUploader = ({ value, onChange, label = 'Imagem' }) => {
   const [error, setError]        = useState('');
   const [preview, setPreview]    = useState(value || '');
   const inputRef = useRef();
+
+  // Sincroniza o preview se o valor mudar externamente (ex: após carregar do BD)
+  useEffect(() => {
+    setPreview(value || '');
+  }, [value]);
 
   const handleFile = async (e) => {
     const file = e.target.files[0];
